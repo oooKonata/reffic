@@ -50,6 +50,7 @@
 
     &__right {
       display: flex;
+      justify-content: end;
       gap: 4px;
     }
 

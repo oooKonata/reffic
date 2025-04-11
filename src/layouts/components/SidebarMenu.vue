@@ -7,10 +7,30 @@
 
 <template>
   <div class="sidebar">
+    <div class="profile">
+      <OOption>
+        <template #left>
+          <OIcon :src="loadStaticResource('/images/profile.jpg')" />
+          <div class="info">
+            <label>oooKonata ppoi's reffic</label>
+            <OIcon :src="loadStaticResource('/icons/sidebar-arrow.svg')" />
+          </div>
+        </template>
+        <template #right>
+          <OIcon
+            :src="loadStaticResource('/icons/sidebar-fold.svg')"
+            :hotArea="[24, 24]"
+            interactive
+            class="sidebar-fold" />
+          <OIcon :src="loadStaticResource('/icons/sidebar-create.svg')" :hotArea="[24, 24]" interactive />
+        </template>
+      </OOption>
+    </div>
+
     <OOptionGroup class="nav">
       <OOption v-for="(item, index) in navArr" :key="index">
         <template #left>
-          <OIcon :src="item.url" interactive />
+          <OIcon :src="item.url" />
           <label>{{ item.label }}</label>
         </template>
         <template #right>
@@ -85,7 +105,7 @@
     <OOptionGroup class="set">
       <OOption v-for="(item, index) in setArr" :key="index">
         <template #left>
-          <OIcon :src="item.url" interactive />
+          <OIcon :src="item.url" />
           <label>{{ item.label }}</label>
         </template>
         <template #right>
@@ -111,6 +131,30 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
+      overflow-y: scroll;
+    }
+
+    .profile {
+      margin: 8px;
+      .info {
+        display: flex;
+        align-self: center;
+      }
+      .sidebar-fold {
+        display: none;
+      }
+
+      :deep(.o-option) {
+        padding-right: 4px;
+      }
+
+      :deep(.o-option .o-option__right) {
+        width: 56px;
+      }
+    }
+
+    &:hover .sidebar-fold {
+      display: flex;
     }
 
     .nav {
@@ -129,11 +173,11 @@
       margin: 8px;
     }
 
-    :deep(.o-option .o-option__right) {
+    :deep(.o-option-group .o-option .o-option__right) {
       display: none;
     }
 
-    :deep(.o-option:hover .o-option__right) {
+    :deep(.o-option-group .o-option:hover .o-option__right) {
       display: flex;
     }
   }
