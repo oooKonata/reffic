@@ -1,0 +1,27 @@
+$o-b: #000000;
+$o-b4: rgba($o-b, 0.04);
+$o-b6: rgba($o-b, 0.06);
+$o-b8: rgba($o-b, 0.08);
+$o-b10: rgba($o-b, 0.1);
+$o-b20: rgba($o-b, 0.2);
+$o-b30: rgba($o-b, 0.3);
+$o-b40: rgba($o-b, 0.4);
+$o-b50: rgba($o-b, 0.5);
+$o-b60: rgba($o-b, 0.6);
+$o-b70: rgba($o-b, 0.7);
+$o-b80: rgba($o-b, 0.8);
+$o-b90: rgba($o-b, 0.9);
+
+$o-w: #ffffff;
+$o-bg: #f8f8f8;
+
+$o-warn: #eb5757;
+
+@mixin hover-active {
+  &:hover {
+    background-color: $o-b6;
+  }
+  &:active {
+    background-color: $o-b10;
+  }
+}
