@@ -3,26 +3,11 @@
   import { OOption, OOptionGroup, OOptionNested } from '@/components/o-menu'
   import { navArr, pageArr, setArr } from '../mock/sidebarData'
   import { loadStaticResource } from '@/assets'
-  import NestedOption from '../../components/o-menu/option-nested.vue'
-  import { SidebarOption } from '../type'
 </script>
 
 <template>
   <div class="sidebar">
-    <OOptionGroup class="sidebar__group">
-      <!-- 标题插槽 -->
-      <template #title>
-        <OOption>
-          <template #left>
-            <label class="title">标题</label>
-          </template>
-          <template #right>
-            <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
-          </template>
-        </OOption>
-      </template>
-
-      <!-- 默认插槽 -->
+    <OOptionGroup class="nav">
       <OOption v-for="(item, index) in navArr" :key="index">
         <template #left>
           <OIcon :src="item.url" interactive />
@@ -35,25 +20,69 @@
       </OOption>
     </OOptionGroup>
 
-    <OOptionGroup class="sidebar__group">
-      <OOptionNested :data="pageArr">
-        <template #default="{ option }">
+    <div class="scroll-view">
+      <OOptionGroup class="fav">
+        <template #title>
           <OOption>
             <template #left>
-              <OIcon :src="loadStaticResource('/icons/sidebar-page.svg')" interactive />
-              <label>{{ option.label }}</label>
+              <label class="title">最爱</label>
             </template>
             <template #right>
               <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
-              <OIcon :src="loadStaticResource('/icons/sidebar-add.svg')" interactive />
             </template>
           </OOption>
         </template>
-      </OOptionNested>
-    </OOptionGroup>
+        <OOptionNested :data="pageArr">
+          <template #default="{ optionData, level }">
+            <OOption>
+              <template #left>
+                <OIcon
+                  :src="loadStaticResource('/icons/sidebar-page.svg')"
+                  :style="{ marginLeft: `${8 * level}px` }"
+                  interactive />
+                <label>{{ optionData.label }}</label>
+              </template>
+              <template #right>
+                <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
+                <OIcon :src="loadStaticResource('/icons/sidebar-add.svg')" interactive />
+              </template>
+            </OOption>
+          </template>
+        </OOptionNested>
+      </OOptionGroup>
 
-    <OOptionGroup class="sidebar__group">
-      <!-- 默认插槽 -->
+      <OOptionGroup class="priv">
+        <template #title>
+          <OOption>
+            <template #left>
+              <label class="title">私人</label>
+            </template>
+            <template #right>
+              <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
+            </template>
+          </OOption>
+        </template>
+        <OOptionNested :data="pageArr">
+          <template #default="{ optionData, level }">
+            <OOption>
+              <template #left>
+                <OIcon
+                  :src="loadStaticResource('/icons/sidebar-page.svg')"
+                  :style="{ marginLeft: `${8 * level}px` }"
+                  interactive />
+                <label>{{ optionData.label }}</label>
+              </template>
+              <template #right>
+                <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
+                <OIcon :src="loadStaticResource('/icons/sidebar-add.svg')" interactive />
+              </template>
+            </OOption>
+          </template>
+        </OOptionNested>
+      </OOptionGroup>
+    </div>
+
+    <OOptionGroup class="set">
       <OOption v-for="(item, index) in setArr" :key="index">
         <template #left>
           <OIcon :src="item.url" interactive />
@@ -77,8 +106,35 @@
     height: 100vh;
     background-color: beige;
 
-    &__group {
+    .scroll-view {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .nav {
+      margin: 0 8px 8px;
+    }
+
+    .fav {
+      margin: 8px 8px 0;
+    }
+
+    .priv {
+      margin: 0 8px 8px;
+    }
+
+    .set {
       margin: 8px;
+    }
+
+    :deep(.o-option .o-option__right) {
+      display: none;
+    }
+
+    :deep(.o-option:hover .o-option__right) {
+      display: flex;
     }
   }
 </style>

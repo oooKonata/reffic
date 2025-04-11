@@ -38,6 +38,8 @@
     cursor: pointer;
     user-select: none;
 
+    background-color: cyan;
+
     &__left {
       flex: 1;
       display: flex;

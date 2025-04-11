@@ -24,5 +24,9 @@
       font-size: 12px;
       font-weight: 500;
     }
+
+    &__title:hover :deep(*) {
+      color: $o-b80;
+    }
   }
 </style>
