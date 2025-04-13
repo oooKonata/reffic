@@ -3,10 +3,25 @@
   import { OOption, OOptionGroup, OOptionNested } from '@/components/o-menu'
   import { navArr, pageArr, setArr } from '../mock/sidebarData'
   import { loadStaticResource } from '@/assets'
+  import { ref } from 'vue'
+  import { storeToRefs } from 'pinia'
+  import { useStateStore } from '@/stores/state/useStateStore'
+
+  withDefaults(
+    defineProps<{
+      sidebarWidth: number
+    }>(),
+    {
+      sidebarWidth: 248,
+    }
+  )
+
+  const isResizeDivHover = ref(false)
+  const { sidebarResizeStart } = storeToRefs(useStateStore())
 </script>
 
 <template>
-  <div class="sidebar">
+  <div :class="['sidebar', { 'is-resize-div-hover': isResizeDivHover }]" :style="{ width: `${sidebarWidth}px` }">
     <div class="profile">
       <OOption>
         <template #left>
@@ -17,12 +32,8 @@
           </div>
         </template>
         <template #right>
-          <OIcon
-            :src="loadStaticResource('/icons/sidebar-fold.svg')"
-            :hotArea="[24, 24]"
-            interactive
-            class="sidebar-fold" />
-          <OIcon :src="loadStaticResource('/icons/sidebar-create.svg')" :hotArea="[24, 24]" interactive />
+          <OIcon :src="loadStaticResource('/icons/sidebar-fold.svg')" :size="24" interactive class="sidebar-fold" />
+          <OIcon :src="loadStaticResource('/icons/sidebar-create.svg')" :size="24" interactive />
         </template>
       </OOption>
     </div>
@@ -114,17 +125,25 @@
         </template>
       </OOption>
     </OOptionGroup>
+    <div
+      class="resize"
+      @mouseenter="isResizeDivHover = true"
+      @mouseleave="isResizeDivHover = false"
+      @mousedown="sidebarResizeStart = true"></div>
   </div>
 </template>
 
 <style scoped lang="scss">
   .sidebar {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 248px;
+    min-width: 248px;
+    max-width: 50vw;
     height: 100vh;
-    background-color: beige;
+    background-color: $o-bg;
+    box-shadow: $o-b2 -1px 0 0 0 inset;
 
     .scroll-view {
       flex: 1;
@@ -180,5 +199,18 @@
     :deep(.o-option-group .o-option:hover .o-option__right) {
       display: flex;
     }
+
+    .resize {
+      position: absolute;
+      width: 12px;
+      height: 100%;
+      top: 0;
+      right: -6px;
+    }
+  }
+
+  .is-resize-div-hover {
+    box-shadow: $o-b10 -2px 0 0 0 inset;
+    cursor: col-resize;
   }
 </style>
