@@ -1,10 +1,10 @@
 <script setup lang="ts">
   import { storeToRefs } from 'pinia'
-  import { useStateStore } from '@/stores/state/useStateStore'
+  import { useLayoutStore } from '@/stores/state/useLayoutStore'
   import SidebarMenu from './components/SidebarMenu.vue'
   import { ref } from 'vue'
 
-  const { sidebarResizeStart } = storeToRefs(useStateStore())
+  const { sidebarResizeStart } = storeToRefs(useLayoutStore())
   const sidebarWidth = ref(248)
 </script>
 

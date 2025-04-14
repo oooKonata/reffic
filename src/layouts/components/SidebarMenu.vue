@@ -5,8 +5,10 @@
   import { loadStaticResource } from '@/assets'
   import { ref } from 'vue'
   import { storeToRefs } from 'pinia'
-  import { useStateStore } from '@/stores/state/useStateStore'
+  import { useLayoutStore } from '@/stores/state/useLayoutStore'
   import { throttle } from 'lodash-es'
+  import { SidebarOption } from '../type'
+  import { v4 as uuidv4 } from 'uuid'
 
   withDefaults(
     defineProps<{
@@ -17,7 +19,7 @@
     }
   )
 
-  const { sidebarResizeStart } = storeToRefs(useStateStore())
+  const { sidebarResizeStart, ActionMenuContext, mousePisition, orderFav, orderPriv } = storeToRefs(useLayoutStore())
 
   const isResizeDivHover = ref(false)
   const showDividerTop = ref(false)
@@ -37,6 +39,36 @@
     100,
     { leading: false, trailing: true }
   )
+
+  const handleMore = (id: string, event: MouseEvent) => {
+    ActionMenuContext.value = id
+    mousePisition.value = {
+      x: event.clientX,
+      y: event.clientY,
+    }
+  }
+
+  const handleAdd = (data?: SidebarOption) => {
+    if (data) {
+      data.child.unshift({
+        id: uuidv4(),
+        label: '新建页面',
+        url: loadStaticResource('/icons/sidebar-page.svg'),
+        fav: false,
+        fold: false,
+        child: [],
+      })
+    } else {
+      pageArr.value.unshift({
+        id: uuidv4(),
+        label: '新建页面',
+        url: loadStaticResource('/icons/sidebar-page.svg'),
+        fav: false,
+        fold: false,
+        child: [],
+      })
+    }
+  }
 
   const handleRoute = (id: string) => {
     optionActiveId.value = id
@@ -72,23 +104,22 @@
           <OIcon :src="item.url" />
           <label>{{ item.label }}</label>
         </template>
-        <template #right>
-          <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
-          <OIcon :src="loadStaticResource('/icons/sidebar-add.svg')" interactive />
-        </template>
       </OOption>
     </OOptionGroup>
 
     <div class="scroll-view" @scroll="handleSrcollView">
       <div class="scroll-view__content">
-        <OOptionGroup class="fav">
+        <OOptionGroup v-if="favArr" class="fav" :style="{ order: orderFav }">
           <template #title>
             <OOption>
               <template #left>
                 <label class="title">最爱</label>
               </template>
               <template #right>
-                <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
+                <OIcon
+                  :src="loadStaticResource('/icons/sidebar-more.svg')"
+                  interactive
+                  @click="handleMore('fav', $event)" />
               </template>
             </OOption>
           </template>
@@ -110,36 +141,35 @@
                       @click="optionData.fold = !optionData.fold" />
                     <OIcon v-else :src="loadStaticResource('/icons/sidebar-page.svg')" interactive />
                   </div>
-
-                  <!-- <OIcon
-                    :class="[{ 'is-unfold': !optionData.fold }, { 'is-fold': optionData.fold }]"
-                    :src="
-                      optionHoverId === optionData.id && optionData.child.length
-                        ? loadStaticResource('/icons/sidebar-arrow.svg')
-                        : loadStaticResource('/icons/sidebar-page.svg')
-                    "
-                    :style="{ marginLeft: `${8 * level}px` }"
-                    interactive
-                    @click="optionData.fold = !optionData.fold" /> -->
                   <label>{{ optionData.label }}</label>
                 </template>
                 <template #right>
-                  <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
-                  <OIcon :src="loadStaticResource('/icons/sidebar-add.svg')" interactive />
+                  <OIcon
+                    :src="loadStaticResource('/icons/sidebar-more.svg')"
+                    interactive
+                    @click="handleMore(optionData.id, $event)" />
+                  <OIcon
+                    :src="loadStaticResource('/icons/sidebar-add.svg')"
+                    interactive
+                    @click="handleAdd(optionData)" />
                 </template>
               </OOption>
             </template>
           </OOptionNested>
         </OOptionGroup>
 
-        <OOptionGroup class="priv">
+        <OOptionGroup class="priv" :style="{ order: orderPriv }">
           <template #title>
             <OOption>
               <template #left>
                 <label class="title">私人</label>
               </template>
               <template #right>
-                <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
+                <OIcon
+                  :src="loadStaticResource('/icons/sidebar-more.svg')"
+                  interactive
+                  @click="handleMore('priv', $event)" />
+                <OIcon :src="loadStaticResource('/icons/sidebar-add.svg')" interactive @click="handleAdd()" />
               </template>
             </OOption>
           </template>
@@ -164,8 +194,14 @@
                   <label>{{ optionData.label }}</label>
                 </template>
                 <template #right>
-                  <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
-                  <OIcon :src="loadStaticResource('/icons/sidebar-add.svg')" interactive />
+                  <OIcon
+                    :src="loadStaticResource('/icons/sidebar-more.svg')"
+                    interactive
+                    @click="handleMore(optionData.id, $event)" />
+                  <OIcon
+                    :src="loadStaticResource('/icons/sidebar-add.svg')"
+                    interactive
+                    @click="handleAdd(optionData)" />
                 </template>
               </OOption>
             </template>
@@ -184,10 +220,6 @@
         <template #left>
           <OIcon :src="item.url" />
           <label>{{ item.label }}</label>
-        </template>
-        <template #right>
-          <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
-          <OIcon :src="loadStaticResource('/icons/sidebar-add.svg')" interactive />
         </template>
       </OOption>
     </OOptionGroup>
@@ -210,30 +242,6 @@
     height: 100vh;
     background-color: $o-bg;
     box-shadow: $o-b2 -1px 0 0 0 inset;
-
-    .scroll-view {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow-y: scroll;
-      &__content {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        .is-unfold {
-          :deep(img) {
-            transform: rotate(0deg);
-            transition: 0.2s ease-in-out;
-          }
-        }
-        .is-fold {
-          :deep(img) {
-            transform: rotate(-90deg);
-            transition: 0.2s ease-in-out;
-          }
-        }
-      }
-    }
 
     .profile {
       margin: 8px;
@@ -258,6 +266,31 @@
       }
     }
 
+    .scroll-view {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: scroll;
+      &__content {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 8px;
+        .is-unfold {
+          :deep(img) {
+            transform: rotate(0deg);
+            transition: 0.2s ease-in-out;
+          }
+        }
+        .is-fold {
+          :deep(img) {
+            transform: rotate(-90deg);
+            transition: 0.2s ease-in-out;
+          }
+        }
+      }
+    }
+
     &:hover .sidebar-fold {
       display: flex;
     }
@@ -268,12 +301,10 @@
     }
 
     .fav {
-      padding: 8px 8px 0;
       cursor: pointer;
     }
 
     .priv {
-      padding: 0 8px 8px;
       cursor: pointer;
     }
 

@@ -17,58 +17,7 @@ const setArr = ref<OptionBase[]>([
   { id: 'share', label: '分享', url: loadStaticResource('/icons/sidebar-share.svg') },
 ])
 
-const favArr = ref<SidebarOption[]>([
-  {
-    id: uuidv4(),
-    label: '新页面b0',
-    url: loadStaticResource('/icons/sidebar-page.svg'),
-    fav: false,
-    fold: false,
-    child: [
-      {
-        id: uuidv4(),
-        label: '新页面b1',
-        url: loadStaticResource('/icons/sidebar-page.svg'),
-        fav: false,
-        fold: false,
-        child: [],
-      },
-      {
-        id: uuidv4(),
-        label: '新页面b2',
-        url: loadStaticResource('/icons/sidebar-page.svg'),
-        fav: false,
-        fold: false,
-        child: [],
-      },
-    ],
-  },
-  {
-    id: uuidv4(),
-    label: '新页面b0',
-    url: loadStaticResource('/icons/sidebar-page.svg'),
-    fav: false,
-    fold: false,
-    child: [
-      {
-        id: uuidv4(),
-        label: '新页面b1',
-        url: loadStaticResource('/icons/sidebar-page.svg'),
-        fav: false,
-        fold: false,
-        child: [],
-      },
-      {
-        id: uuidv4(),
-        label: '新页面b2',
-        url: loadStaticResource('/icons/sidebar-page.svg'),
-        fav: false,
-        fold: false,
-        child: [],
-      },
-    ],
-  },
-])
+const favArr = ref<SidebarOption[]>()
 
 const pageArr = ref<SidebarOption[]>([
   {
