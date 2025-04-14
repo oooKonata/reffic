@@ -1,16 +1,42 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
+  import { computed, ref } from 'vue'
 
   defineOptions({
     name: 'OOption',
   })
 
-  // simulate active state
+  const props = defineProps<{
+    id?: string
+    activeId?: string
+  }>()
+
+  const emits = defineEmits<{
+    (e: 'option-mouseenter', id?: string): void
+    (e: 'option-mouseleave', id?: string): void
+  }>()
+
   const simActive = ref(false)
+  const simHover = ref(false)
+
+  const isActive = computed(() => (props.id && props.activeId ? props.activeId === props.id : false))
+
+  const handleMouseEnter = () => {
+    simHover.value = true
+    emits('option-mouseenter', props.id)
+  }
+  const handleMouseLeave = () => {
+    simHover.value = false
+    emits('option-mouseleave', props.id)
+  }
 </script>
 
 <template>
-  <div :class="['o-option', { 'sim-active': simActive }]" @mousedown="simActive = true" @mouseup="simActive = false">
+  <div
+    :class="['o-option', { 'sim-active': simActive }, { 'sim-hover': simHover }, { 'is-active': isActive }]"
+    @mousedown="simActive = true"
+    @mouseup="simActive = false"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave">
     <div v-if="$slots.left" class="o-option__left">
       <slot name="left" />
     </div>
@@ -59,12 +85,19 @@
       cursor: inherit;
     }
 
-    &:hover {
+    &.sim-hover {
       background-color: $o-b6;
     }
 
     &.sim-active {
       background-color: $o-b10 !important;
+    }
+
+    &.is-active {
+      background-color: $o-b6;
+      :deep(*) {
+        color: $o-b80;
+      }
     }
   }
 </style>

@@ -5,6 +5,7 @@ export interface OptionBase {
 }
 export interface SidebarOption extends OptionBase {
   fav: boolean
+  fold: boolean
   child: SidebarOption[]
 }
 

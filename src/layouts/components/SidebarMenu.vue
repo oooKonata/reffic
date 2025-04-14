@@ -1,11 +1,12 @@
 <script setup lang="ts">
   import OIcon from '@/components/o-icon'
   import { OOption, OOptionGroup, OOptionNested } from '@/components/o-menu'
-  import { navArr, pageArr, setArr } from '../mock/sidebarData'
+  import { favArr, navArr, pageArr, setArr } from '../mock/sidebarData'
   import { loadStaticResource } from '@/assets'
   import { ref } from 'vue'
   import { storeToRefs } from 'pinia'
   import { useStateStore } from '@/stores/state/useStateStore'
+  import { throttle } from 'lodash-es'
 
   withDefaults(
     defineProps<{
@@ -16,8 +17,30 @@
     }
   )
 
-  const isResizeDivHover = ref(false)
   const { sidebarResizeStart } = storeToRefs(useStateStore())
+
+  const isResizeDivHover = ref(false)
+  const showDividerTop = ref(false)
+  const showDividerBottom = ref(false)
+
+  const optionActiveId = ref('home')
+  const optionHoverId = ref('')
+
+  const handleSrcollView = throttle(
+    () => {
+      const { top, bottom } = document.querySelector('.scroll-view__content')!.getBoundingClientRect()
+      const navBottom = document.querySelector('.nav')!.getBoundingClientRect().bottom
+      const setTop = document.querySelector('.set')!.getBoundingClientRect().top
+      showDividerTop.value = top < navBottom ? true : false
+      showDividerBottom.value = bottom > setTop ? true : false
+    },
+    100,
+    { leading: false, trailing: true }
+  )
+
+  const handleRoute = (id: string) => {
+    optionActiveId.value = id
+  }
 </script>
 
 <template>
@@ -38,8 +61,13 @@
       </OOption>
     </div>
 
-    <OOptionGroup class="nav">
-      <OOption v-for="(item, index) in navArr" :key="index">
+    <OOptionGroup :class="['nav', { 'show-divider-top': showDividerTop }]">
+      <OOption
+        v-for="(item, index) in navArr"
+        :id="item.id"
+        :key="index"
+        :activeId="optionActiveId"
+        @click="handleRoute(item.id)">
         <template #left>
           <OIcon :src="item.url" />
           <label>{{ item.label }}</label>
@@ -51,70 +79,108 @@
       </OOption>
     </OOptionGroup>
 
-    <div class="scroll-view">
-      <OOptionGroup class="fav">
-        <template #title>
-          <OOption>
-            <template #left>
-              <label class="title">最爱</label>
-            </template>
-            <template #right>
-              <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
-            </template>
-          </OOption>
-        </template>
-        <OOptionNested :data="pageArr">
-          <template #default="{ optionData, level }">
+    <div class="scroll-view" @scroll="handleSrcollView">
+      <div class="scroll-view__content">
+        <OOptionGroup class="fav">
+          <template #title>
             <OOption>
               <template #left>
-                <OIcon
-                  :src="loadStaticResource('/icons/sidebar-page.svg')"
-                  :style="{ marginLeft: `${8 * level}px` }"
-                  interactive />
-                <label>{{ optionData.label }}</label>
+                <label class="title">最爱</label>
               </template>
               <template #right>
                 <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
-                <OIcon :src="loadStaticResource('/icons/sidebar-add.svg')" interactive />
               </template>
             </OOption>
           </template>
-        </OOptionNested>
-      </OOptionGroup>
+          <OOptionNested :data="favArr">
+            <template #default="{ optionData, level }">
+              <OOption
+                :id="optionData.id"
+                :activeId="optionActiveId"
+                @click="handleRoute(optionData.id)"
+                @option-mouseenter="id => (optionHoverId = id!)"
+                @option-mouseleave="id => (optionHoverId = '')">
+                <template #left>
+                  <div :style="{ marginLeft: `${8 * level}px` }">
+                    <OIcon
+                      v-if="optionHoverId === optionData.id && optionData.child.length"
+                      :class="[{ 'is-unfold': !optionData.fold }, { 'is-fold': optionData.fold }]"
+                      :src="loadStaticResource('/icons/sidebar-arrow.svg')"
+                      interactive
+                      @click="optionData.fold = !optionData.fold" />
+                    <OIcon v-else :src="loadStaticResource('/icons/sidebar-page.svg')" interactive />
+                  </div>
 
-      <OOptionGroup class="priv">
-        <template #title>
-          <OOption>
-            <template #left>
-              <label class="title">私人</label>
+                  <!-- <OIcon
+                    :class="[{ 'is-unfold': !optionData.fold }, { 'is-fold': optionData.fold }]"
+                    :src="
+                      optionHoverId === optionData.id && optionData.child.length
+                        ? loadStaticResource('/icons/sidebar-arrow.svg')
+                        : loadStaticResource('/icons/sidebar-page.svg')
+                    "
+                    :style="{ marginLeft: `${8 * level}px` }"
+                    interactive
+                    @click="optionData.fold = !optionData.fold" /> -->
+                  <label>{{ optionData.label }}</label>
+                </template>
+                <template #right>
+                  <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
+                  <OIcon :src="loadStaticResource('/icons/sidebar-add.svg')" interactive />
+                </template>
+              </OOption>
             </template>
-            <template #right>
-              <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
-            </template>
-          </OOption>
-        </template>
-        <OOptionNested :data="pageArr">
-          <template #default="{ optionData, level }">
+          </OOptionNested>
+        </OOptionGroup>
+
+        <OOptionGroup class="priv">
+          <template #title>
             <OOption>
               <template #left>
-                <OIcon
-                  :src="loadStaticResource('/icons/sidebar-page.svg')"
-                  :style="{ marginLeft: `${8 * level}px` }"
-                  interactive />
-                <label>{{ optionData.label }}</label>
+                <label class="title">私人</label>
               </template>
               <template #right>
                 <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
-                <OIcon :src="loadStaticResource('/icons/sidebar-add.svg')" interactive />
               </template>
             </OOption>
           </template>
-        </OOptionNested>
-      </OOptionGroup>
+          <OOptionNested :data="pageArr">
+            <template #default="{ optionData, level }">
+              <OOption
+                :id="optionData.id"
+                :activeId="optionActiveId"
+                @click="handleRoute(optionData.id)"
+                @option-mouseenter="id => (optionHoverId = id!)"
+                @option-mouseleave="id => (optionHoverId = '')">
+                <template #left>
+                  <div :style="{ marginLeft: `${8 * level}px` }">
+                    <OIcon
+                      v-if="optionHoverId === optionData.id && optionData.child.length"
+                      :class="[{ 'is-unfold': !optionData.fold }, { 'is-fold': optionData.fold }]"
+                      :src="loadStaticResource('/icons/sidebar-arrow.svg')"
+                      interactive
+                      @click="optionData.fold = !optionData.fold" />
+                    <OIcon v-else :src="loadStaticResource('/icons/sidebar-page.svg')" interactive />
+                  </div>
+                  <label>{{ optionData.label }}</label>
+                </template>
+                <template #right>
+                  <OIcon :src="loadStaticResource('/icons/sidebar-option.svg')" interactive />
+                  <OIcon :src="loadStaticResource('/icons/sidebar-add.svg')" interactive />
+                </template>
+              </OOption>
+            </template>
+          </OOptionNested>
+        </OOptionGroup>
+      </div>
     </div>
 
-    <OOptionGroup class="set">
-      <OOption v-for="(item, index) in setArr" :key="index">
+    <OOptionGroup :class="['set', { 'show-divider-bottom': showDividerBottom }]">
+      <OOption
+        v-for="(item, index) in setArr"
+        :id="item.id"
+        :key="index"
+        :activeId="optionActiveId"
+        @click="handleRoute(item.id)">
         <template #left>
           <OIcon :src="item.url" />
           <label>{{ item.label }}</label>
@@ -149,8 +215,24 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 16px;
       overflow-y: scroll;
+      &__content {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        .is-unfold {
+          :deep(img) {
+            transform: rotate(0deg);
+            transition: 0.2s ease-in-out;
+          }
+        }
+        .is-fold {
+          :deep(img) {
+            transform: rotate(-90deg);
+            transition: 0.2s ease-in-out;
+          }
+        }
+      }
     }
 
     .profile {
@@ -161,6 +243,10 @@
       }
       .sidebar-fold {
         display: none;
+        opacity: 0.5;
+        &:hover {
+          opacity: 1;
+        }
       }
 
       :deep(.o-option) {
@@ -177,19 +263,31 @@
     }
 
     .nav {
-      margin: 0 8px 8px;
+      padding: 0 8px 8px;
+      cursor: pointer;
     }
 
     .fav {
-      margin: 8px 8px 0;
+      padding: 8px 8px 0;
+      cursor: pointer;
     }
 
     .priv {
-      margin: 0 8px 8px;
+      padding: 0 8px 8px;
+      cursor: pointer;
     }
 
     .set {
-      margin: 8px;
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .show-divider-top {
+      box-shadow: $o-b6 0px -1px 0px 0px inset;
+    }
+
+    .show-divider-bottom {
+      box-shadow: $o-b6 0px 1px 0px 0px inset;
     }
 
     :deep(.o-option-group .o-option .o-option__right) {

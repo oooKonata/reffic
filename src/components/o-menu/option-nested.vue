@@ -20,7 +20,7 @@
   <div v-for="(item, index) in data" :key="index" class="option-nested">
     <slot :optionData="item" :level="level" />
 
-    <template v-if="item.child.length">
+    <template v-if="item.child.length && !item.fold">
       <OOptionNested :data="item.child" :level="level + 1">
         <template
           v-for="slotName in Object.keys($slots)"
