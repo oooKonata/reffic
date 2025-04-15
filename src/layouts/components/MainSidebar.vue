@@ -254,11 +254,19 @@
     background-color: $o-bg;
     box-shadow: $o-b2 -1px 0 0 0 inset;
 
+    :deep(*) {
+      color: $o-b60;
+      font-weight: 500;
+    }
+
     .profile {
       margin: 8px;
       .info {
         display: flex;
         align-self: center;
+        label {
+          color: $o-b80;
+        }
       }
       .sidebar-collapse {
         display: none;
