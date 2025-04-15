@@ -7,7 +7,7 @@
   import { storeToRefs } from 'pinia'
   import { useLayoutStore } from '@/stores/state/useLayoutStore'
   import { throttle } from 'lodash-es'
-  import { MenuOption } from '../types'
+  import { SidebarOption } from '../types'
   import { v4 as uuidv4 } from 'uuid'
 
   withDefaults(
@@ -41,7 +41,7 @@
     { leading: false, trailing: true }
   )
 
-  const handleMore = (data: string | MenuOption, event: MouseEvent) => {
+  const handleMore = (data: string | SidebarOption, event: MouseEvent) => {
     MenuContext.value = data
     mousePisition.value = {
       x: event.clientX,
@@ -49,14 +49,16 @@
     }
   }
 
-  const handleAdd = (data?: MenuOption) => {
+  const handleAdd = (data?: SidebarOption) => {
     if (data) {
       data.children!.unshift({
         id: uuidv4(),
         label: '新建页面',
         icon: loadStaticResource('/icons/sidebar-page.svg'),
-        fav: false,
         collapse: false,
+        meta: {
+          fav: false,
+        },
         children: [],
       })
     } else {
@@ -64,8 +66,10 @@
         id: uuidv4(),
         label: '新建页面',
         icon: loadStaticResource('/icons/sidebar-page.svg'),
-        fav: false,
         collapse: false,
+        meta: {
+          fav: false,
+        },
         children: [],
       })
     }
@@ -108,7 +112,7 @@
         :activeId="optionActiveId"
         @click="handleRoute(item.id)">
         <template #left>
-          <OIcon :src="item.icon" />
+          <OIcon :src="item.icon!" />
           <label>{{ item.label }}</label>
         </template>
       </OOption>
@@ -225,7 +229,7 @@
         :activeId="optionActiveId"
         @click="handleRoute(item.id)">
         <template #left>
-          <OIcon :src="item.icon" />
+          <OIcon :src="item.icon!" />
           <label>{{ item.label }}</label>
         </template>
       </OOption>
@@ -286,13 +290,13 @@
         .is-unfold {
           :deep(img) {
             transform: rotate(0deg);
-            transition: 0.2s ease-in-out;
+            transition: 0.1s ease-in-out;
           }
         }
         .is-collapse {
           :deep(img) {
             transform: rotate(-90deg);
-            transition: 0.2s ease-in-out;
+            transition: 0.1s ease-in-out;
           }
         }
       }

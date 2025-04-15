@@ -1,4 +1,4 @@
-export interface MenuOption2 {
+export interface MenuOption {
   id: string
   label: string
   icon?: string
@@ -11,5 +11,5 @@ export interface MenuOption2 {
   disabled?: boolean
   collapse?: boolean
   meta?: Record<string, any>
-  children?: MenuOption2[]
+  children?: MenuOption[]
 }

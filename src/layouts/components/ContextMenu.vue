@@ -1,14 +1,13 @@
 <script setup lang="ts">
   import { useLayoutStore } from '@/stores/state/useLayoutStore'
   import { storeToRefs } from 'pinia'
-  import { MenuOption } from '../types'
   import { ref } from 'vue'
   import { loadStaticResource } from '@/assets'
-  import { OMenu } from '@/components/o-menu'
+  import { SidebarOption } from '../types'
 
   const { MenuContext, mousePisition, orderFav, orderPriv } = storeToRefs(useLayoutStore())
 
-  const menuOptions = ref<MenuOption[][]>([
+  const menuOptions = ref<SidebarOption[][]>([
     [
       { id: 'order', label: '排序', icon: loadStaticResource('/icons/sidebar-file.svg') },
       { id: 'display', label: '显示', icon: loadStaticResource('/icons/sidebar-file.svg') },

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { MenuOption } from '@/layouts/types'
   import { ref, computed, inject, provide } from 'vue'
   import { depthKey } from '../constants/key'
+  import { MenuOption } from './types'
 
   defineOptions({
     name: 'OOptionNested',

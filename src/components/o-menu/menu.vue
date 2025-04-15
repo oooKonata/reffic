@@ -1,6 +1,5 @@
 <script setup lang="ts">
-  import { MenuOption } from '@/layouts/types'
-  import { OOptionNested } from '.'
+  import { MenuOption } from './types'
 
   defineOptions({
     name: 'OMenu',
