@@ -32,7 +32,7 @@
 
 <template>
   <div
-    :class="['o-option', { 'sim-active': simActive }, { 'sim-hover': simHover }, { 'is-active': isActive }]"
+    :class="['o-option', { 'sim-active': simActive }, { 'sim-hover': simHover }, { 'is-Active': isActive }]"
     @mousedown="simActive = true"
     @mouseup="simActive = false"
     @mouseenter="handleMouseEnter"
@@ -69,7 +69,6 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      // min-width: 0;
     }
 
     &__right {

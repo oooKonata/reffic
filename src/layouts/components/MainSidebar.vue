@@ -7,7 +7,7 @@
   import { storeToRefs } from 'pinia'
   import { useLayoutStore } from '@/stores/state/useLayoutStore'
   import { throttle } from 'lodash-es'
-  import { SidebarOption } from '../type'
+  import { MenuOption } from '../types'
   import { v4 as uuidv4 } from 'uuid'
 
   withDefaults(
@@ -19,9 +19,10 @@
     }
   )
 
-  const { sidebarResizeStart, ActionMenuContext, mousePisition, orderFav, orderPriv } = storeToRefs(useLayoutStore())
+  const { isSidebarResizing, MenuContext, mousePisition, orderFav, orderPriv } = storeToRefs(useLayoutStore())
 
   const isResizeDivHover = ref(false)
+
   const showDividerTop = ref(false)
   const showDividerBottom = ref(false)
 
@@ -40,32 +41,32 @@
     { leading: false, trailing: true }
   )
 
-  const handleMore = (id: string, event: MouseEvent) => {
-    ActionMenuContext.value = id
+  const handleMore = (data: string | MenuOption, event: MouseEvent) => {
+    MenuContext.value = data
     mousePisition.value = {
       x: event.clientX,
       y: event.clientY,
     }
   }
 
-  const handleAdd = (data?: SidebarOption) => {
+  const handleAdd = (data?: MenuOption) => {
     if (data) {
-      data.child.unshift({
+      data.children!.unshift({
         id: uuidv4(),
         label: '新建页面',
-        url: loadStaticResource('/icons/sidebar-page.svg'),
+        icon: loadStaticResource('/icons/sidebar-page.svg'),
         fav: false,
-        fold: false,
-        child: [],
+        collapse: false,
+        children: [],
       })
     } else {
       pageArr.value.unshift({
         id: uuidv4(),
         label: '新建页面',
-        url: loadStaticResource('/icons/sidebar-page.svg'),
+        icon: loadStaticResource('/icons/sidebar-page.svg'),
         fav: false,
-        fold: false,
-        child: [],
+        collapse: false,
+        children: [],
       })
     }
   }
@@ -76,7 +77,9 @@
 </script>
 
 <template>
-  <div :class="['sidebar', { 'is-resize-div-hover': isResizeDivHover }]" :style="{ width: `${sidebarWidth}px` }">
+  <div
+    :class="['sidebar', { 'is-resizing': isResizeDivHover || isSidebarResizing }]"
+    :style="{ width: `${sidebarWidth}px` }">
     <div class="profile">
       <OOption>
         <template #left>
@@ -87,7 +90,11 @@
           </div>
         </template>
         <template #right>
-          <OIcon :src="loadStaticResource('/icons/sidebar-fold.svg')" :size="24" interactive class="sidebar-fold" />
+          <OIcon
+            :src="loadStaticResource('/icons/sidebar-collapse.svg')"
+            :size="24"
+            interactive
+            class="sidebar-collapse" />
           <OIcon :src="loadStaticResource('/icons/sidebar-create.svg')" :size="24" interactive />
         </template>
       </OOption>
@@ -101,7 +108,7 @@
         :activeId="optionActiveId"
         @click="handleRoute(item.id)">
         <template #left>
-          <OIcon :src="item.url" />
+          <OIcon :src="item.icon" />
           <label>{{ item.label }}</label>
         </template>
       </OOption>
@@ -123,8 +130,8 @@
               </template>
             </OOption>
           </template>
-          <OOptionNested :data="favArr">
-            <template #default="{ optionData, level }">
+          <OOptionNested :source="favArr">
+            <template #default="{ optionData, depth }">
               <OOption
                 :id="optionData.id"
                 :activeId="optionActiveId"
@@ -132,13 +139,13 @@
                 @option-mouseenter="id => (optionHoverId = id!)"
                 @option-mouseleave="id => (optionHoverId = '')">
                 <template #left>
-                  <div :style="{ marginLeft: `${8 * level}px` }">
+                  <div :style="{ marginLeft: `${8 * depth}px` }">
                     <OIcon
-                      v-if="optionHoverId === optionData.id && optionData.child.length"
-                      :class="[{ 'is-unfold': !optionData.fold }, { 'is-fold': optionData.fold }]"
+                      v-if="optionHoverId === optionData.id && optionData.children!.length"
+                      :class="[{ 'is-unfold': !optionData.collapse }, { 'is-collapse': optionData.collapse }]"
                       :src="loadStaticResource('/icons/sidebar-arrow.svg')"
                       interactive
-                      @click="optionData.fold = !optionData.fold" />
+                      @click="optionData.collapse = !optionData.collapse" />
                     <OIcon v-else :src="loadStaticResource('/icons/sidebar-page.svg')" interactive />
                   </div>
                   <label>{{ optionData.label }}</label>
@@ -147,7 +154,7 @@
                   <OIcon
                     :src="loadStaticResource('/icons/sidebar-more.svg')"
                     interactive
-                    @click="handleMore(optionData.id, $event)" />
+                    @click="handleMore(optionData, $event)" />
                   <OIcon
                     :src="loadStaticResource('/icons/sidebar-add.svg')"
                     interactive
@@ -173,8 +180,8 @@
               </template>
             </OOption>
           </template>
-          <OOptionNested :data="pageArr">
-            <template #default="{ optionData, level }">
+          <OOptionNested :source="pageArr">
+            <template #default="{ optionData, depth }">
               <OOption
                 :id="optionData.id"
                 :activeId="optionActiveId"
@@ -182,13 +189,13 @@
                 @option-mouseenter="id => (optionHoverId = id!)"
                 @option-mouseleave="id => (optionHoverId = '')">
                 <template #left>
-                  <div :style="{ marginLeft: `${8 * level}px` }">
+                  <div :style="{ marginLeft: `${8 * depth}px` }">
                     <OIcon
-                      v-if="optionHoverId === optionData.id && optionData.child.length"
-                      :class="[{ 'is-unfold': !optionData.fold }, { 'is-fold': optionData.fold }]"
+                      v-if="optionHoverId === optionData.id && optionData.children!.length"
+                      :class="[{ 'is-unfold': !optionData.collapse }, { 'is-collapse': optionData.collapse }]"
                       :src="loadStaticResource('/icons/sidebar-arrow.svg')"
                       interactive
-                      @click="optionData.fold = !optionData.fold" />
+                      @click="optionData.collapse = !optionData.collapse" />
                     <OIcon v-else :src="loadStaticResource('/icons/sidebar-page.svg')" interactive />
                   </div>
                   <label>{{ optionData.label }}</label>
@@ -197,7 +204,7 @@
                   <OIcon
                     :src="loadStaticResource('/icons/sidebar-more.svg')"
                     interactive
-                    @click="handleMore(optionData.id, $event)" />
+                    @click="handleMore(optionData, $event)" />
                   <OIcon
                     :src="loadStaticResource('/icons/sidebar-add.svg')"
                     interactive
@@ -218,7 +225,7 @@
         :activeId="optionActiveId"
         @click="handleRoute(item.id)">
         <template #left>
-          <OIcon :src="item.url" />
+          <OIcon :src="item.icon" />
           <label>{{ item.label }}</label>
         </template>
       </OOption>
@@ -227,7 +234,7 @@
       class="resize"
       @mouseenter="isResizeDivHover = true"
       @mouseleave="isResizeDivHover = false"
-      @mousedown="sidebarResizeStart = true"></div>
+      @mousedown="isSidebarResizing = true"></div>
   </div>
 </template>
 
@@ -249,7 +256,7 @@
         display: flex;
         align-self: center;
       }
-      .sidebar-fold {
+      .sidebar-collapse {
         display: none;
         opacity: 0.5;
         &:hover {
@@ -282,7 +289,7 @@
             transition: 0.2s ease-in-out;
           }
         }
-        .is-fold {
+        .is-collapse {
           :deep(img) {
             transform: rotate(-90deg);
             transition: 0.2s ease-in-out;
@@ -291,7 +298,7 @@
       }
     }
 
-    &:hover .sidebar-fold {
+    &:hover .sidebar-collapse {
       display: flex;
     }
 
@@ -338,7 +345,7 @@
     }
   }
 
-  .is-resize-div-hover {
+  .is-resizing {
     box-shadow: $o-b10 -2px 0 0 0 inset;
     cursor: col-resize;
   }
