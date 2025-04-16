@@ -1,8 +1,8 @@
 <script setup lang="ts">
   import { MenuOption } from './types'
-  import { ref } from 'vue'
+  import { computed, ref } from 'vue'
   import { loadStaticResource } from '@/assets'
-  import { OOptionNested, OOption } from '.'
+  import { OOption, OOptionFlyout } from '.'
   import OIcon from '../o-icon'
 
   defineOptions({
@@ -31,10 +31,22 @@
         icon: loadStaticResource('/icons/sidebar-file.svg'),
         children: [
           { id: 'sort-by-name', label: '按名称排序', icon: loadStaticResource('/icons/sidebar-file.svg') },
-          { id: 'sort-by-date', label: '按日期排序', icon: loadStaticResource('/icons/sidebar-file.svg') },
+          {
+            id: 'sort-by-date',
+            label: '按日期排序',
+            icon: loadStaticResource('/icons/sidebar-file.svg'),
+            children: [
+              { id: 'sort-by-date-asc', label: '升序', icon: loadStaticResource('/icons/sidebar-file.svg') },
+              {
+                id: 'sort-by-date-desc',
+                label: '降序',
+                icon: loadStaticResource('/icons/sidebar-file.svg'),
+              },
+            ],
+          },
         ],
       },
-      { id: 'display', label: '显示', icon: loadStaticResource('/icons/sidebar-file.svg') },
+      // { id: 'display', label: '显示', icon: loadStaticResource('/icons/sidebar-file.svg') },
     ],
     [
       {
@@ -48,57 +60,63 @@
         icon: loadStaticResource('/icons/sidebar-file.svg'),
       },
     ],
-    [
-      {
-        id: 'move-to-fav',
-        label: '添加到最爱',
-        icon: loadStaticResource('/icons/menu-fav.svg'),
-      },
-    ],
-    [
-      { id: 'copy-link', label: '拷贝链接', icon: loadStaticResource('/icons/menu-copy-link.svg') },
-      {
-        id: 'duplicate',
-        label: '创建副本',
-        icon: loadStaticResource('/icons/menu-duplicate.svg'),
-        tip: '⌘D',
-      },
-      { id: 'rename', label: '重命名', icon: loadStaticResource('/icons/menu-rename.svg'), tip: '⌘⇧R' },
-      {
-        id: 'move-to',
-        label: '移动到',
-        icon: loadStaticResource('/icons/menu-move-to.svg'),
-        tip: '⌘⇧P',
-      },
-      {
-        id: 'move-to-trash',
-        label: '移至垃圾箱',
-        icon: loadStaticResource('/icons/menu-move-to-trash.svg'),
-      },
-    ],
-    [
-      {
-        id: 'open-in-new-tab',
-        label: '在新选项卡中打卡',
-        icon: loadStaticResource('/icons/menu-open-in-new-tab.svg'),
-        tip: '⌘⇧↵',
-      },
-      {
-        id: 'open-in-side-preview',
-        label: '在侧边预览中打开',
-        icon: loadStaticResource('/icons/menu-open-in-side-preview.svg'),
-        tip: '⌥Click',
-      },
-    ],
+    // [
+    //   {
+    //     id: 'move-to-fav',
+    //     label: '添加到最爱',
+    //     icon: loadStaticResource('/icons/menu-fav.svg'),
+    //   },
+    // ],
+    // [
+    //   { id: 'copy-link', label: '拷贝链接', icon: loadStaticResource('/icons/menu-copy-link.svg') },
+    //   {
+    //     id: 'duplicate',
+    //     label: '创建副本',
+    //     icon: loadStaticResource('/icons/menu-duplicate.svg'),
+    //     tip: '⌘D',
+    //   },
+    //   { id: 'rename', label: '重命名', icon: loadStaticResource('/icons/menu-rename.svg'), tip: '⌘⇧R' },
+    //   {
+    //     id: 'move-to',
+    //     label: '移动到',
+    //     icon: loadStaticResource('/icons/menu-move-to.svg'),
+    //     tip: '⌘⇧P',
+    //   },
+    //   {
+    //     id: 'move-to-trash',
+    //     label: '移至垃圾箱',
+    //     icon: loadStaticResource('/icons/menu-move-to-trash.svg'),
+    //   },
+    // ],
+    // [
+    //   {
+    //     id: 'open-in-new-tab',
+    //     label: '在新选项卡中打卡',
+    //     icon: loadStaticResource('/icons/menu-open-in-new-tab.svg'),
+    //     tip: '⌘⇧↵',
+    //   },
+    //   {
+    //     id: 'open-in-side-preview',
+    //     label: '在侧边预览中打开',
+    //     icon: loadStaticResource('/icons/menu-open-in-side-preview.svg'),
+    //     tip: '⌥Click',
+    //   },
+    // ],
   ])
+
+  const activeId = ref<string>('')
+
+  const handleMouseEnter = (data?: MenuOption) => {
+    activeId.value = data?.id!
+  }
 </script>
 
 <template>
   <div class="o-menu">
     <div v-for="(group, index) in sourceData" :key="index" class="o-menu__group">
-      <OOptionNested :source="group">
-        <template #default="{ optionData, depth }">
-          <OOption>
+      <OOptionFlyout :source="group">
+        <template #default="{ optionData }">
+          <OOption :activeId="activeId" :source="optionData" @option-mouseenter="handleMouseEnter">
             <template #left>
               <OIcon :src="optionData.icon!" />
               <label>{{ optionData.label }}</label>
@@ -108,7 +126,7 @@
             </template>
           </OOption>
         </template>
-      </OOptionNested>
+      </OOptionFlyout>
       <div v-if="index < sourceData.length - 1" class="divider"></div>
     </div>
   </div>
@@ -121,19 +139,22 @@
     gap: 1px;
     position: absolute;
     top: 30px;
-    left: 264px;
-    width: 264px;
+    left: 248px;
+    width: 248px;
     max-height: 70vh;
-    overflow: hidden auto;
+    overflow-x: visible;
     border-radius: 8px;
     background-color: #fff;
     box-shadow: $o-b10 0px 14px 28px -6px, $o-b6 0px 2px 4px -1px, $o-b8 0px 0px 0px 1px;
+
     &__group {
       position: relative;
       display: flex;
       flex-direction: column;
       gap: 1px;
       padding: 4px;
+      cursor: pointer;
+
       .divider {
         position: absolute;
         left: 0;
@@ -143,6 +164,14 @@
         padding: 0 12px;
         background-color: $o-b8;
         background-clip: content-box;
+      }
+
+      :deep(.children) {
+        width: 248px;
+        padding: 4px;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: $o-b10 0px 14px 28px -6px, $o-b6 0px 2px 4px -1px, $o-b8 0px 0px 0px 1px;
       }
     }
   }

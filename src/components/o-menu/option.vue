@@ -1,28 +1,29 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue'
+  import { MenuOption } from './types'
 
   defineOptions({
     name: 'OOption',
   })
 
   const props = defineProps<{
-    id?: string
+    source?: MenuOption
     activeId?: string
   }>()
 
   const emits = defineEmits<{
-    (e: 'option-mouseenter', id?: string): void
+    (e: 'option-mouseenter', optionData?: MenuOption): void
     (e: 'option-mouseleave'): void
   }>()
 
   const simActive = ref(false)
   const simHover = ref(false)
 
-  const isActive = computed(() => (props.id && props.activeId ? props.activeId === props.id : false))
+  const isActive = computed(() => (props.source?.id && props.activeId ? props.activeId === props.source.id : false))
 
   const handleMouseEnter = () => {
     simHover.value = true
-    emits('option-mouseenter', props.id)
+    emits('option-mouseenter', props.source)
   }
   const handleMouseLeave = () => {
     simHover.value = false
@@ -63,7 +64,7 @@
     cursor: pointer;
     user-select: none;
 
-    background-color: cyan;
+    // background-color: cyan;
 
     &__left {
       flex: 1;

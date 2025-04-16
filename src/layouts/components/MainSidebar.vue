@@ -26,8 +26,8 @@
   const showDividerTop = ref(false)
   const showDividerBottom = ref(false)
 
-  const optionActiveId = ref('home')
-  const optionHoverId = ref('')
+  const activeId = ref('home')
+  const hoverId = ref('')
 
   const handleSrcollView = throttle(
     () => {
@@ -75,14 +75,14 @@
     }
   }
 
-  const handleRoute = (id: string) => {
-    optionActiveId.value = id
+  const handleRoute = (data: SidebarOption) => {
+    activeId.value = data.id
   }
 </script>
 
 <template>
   <div
-    :class="['sidebar', { 'is-resizing': isResizeDivHover || isSidebarResizing }]"
+    :class="['main-sidebar', { 'is-resizing': isResizeDivHover || isSidebarResizing }]"
     :style="{ width: `${sidebarWidth}px` }">
     <div class="profile">
       <OOption>
@@ -107,10 +107,10 @@
     <OOptionGroup :class="['nav', { 'show-divider-top': showDividerTop }]">
       <OOption
         v-for="(item, index) in navArr"
-        :id="item.id"
         :key="index"
-        :activeId="optionActiveId"
-        @click="handleRoute(item.id)">
+        :source="item"
+        :activeId="activeId"
+        @click="handleRoute(item)">
         <template #left>
           <OIcon :src="item.icon!" />
           <label>{{ item.label }}</label>
@@ -137,16 +137,16 @@
           <OOptionNested :source="favArr">
             <template #default="{ optionData, depth }">
               <OOption
-                :id="optionData.id"
-                :activeId="optionActiveId"
-                @click="handleRoute(optionData.id)"
-                @option-mouseenter="id => (optionHoverId = id!)"
-                @option-mouseleave="() => (optionHoverId = '')">
+                :source="optionData"
+                :activeId="activeId"
+                @click="handleRoute(optionData)"
+                @option-mouseenter="data => (hoverId = data?.id!)"
+                @option-mouseleave="() => (hoverId = '')">
                 <template #left>
                   <div :style="{ marginLeft: `${8 * depth}px` }">
                     <OIcon
-                      v-if="optionHoverId === optionData.id && optionData.children!.length"
-                      :class="[{ 'is-unfold': !optionData.collapse }, { 'is-collapse': optionData.collapse }]"
+                      v-if="hoverId === optionData.id && optionData.children!.length"
+                      :class="[{ 'is-expand': !optionData.collapse }, { 'is-collapse': optionData.collapse }]"
                       :src="loadStaticResource('/icons/sidebar-arrow.svg')"
                       interactive
                       @click="optionData.collapse = !optionData.collapse" />
@@ -187,15 +187,15 @@
           <OOptionNested :source="pageArr">
             <template #default="{ optionData, depth }">
               <OOption
-                :id="optionData.id"
-                :activeId="optionActiveId"
-                @click="handleRoute(optionData.id)"
-                @option-mouseenter="id => (optionHoverId = id!)"
-                @option-mouseleave="() => (optionHoverId = '')">
+                :source="optionData"
+                :activeId="activeId"
+                @click="handleRoute(optionData)"
+                @option-mouseenter="data => (hoverId = data?.id!)"
+                @option-mouseleave="() => (hoverId = '')">
                 <template #left>
                   <div :style="{ marginLeft: `${8 * depth}px` }">
                     <OIcon
-                      v-if="optionHoverId === optionData.id && optionData.children!.length"
+                      v-if="hoverId === optionData.id && optionData.children!.length"
                       :class="[{ 'is-expand': !optionData.collapse }, { 'is-collapse': optionData.collapse }]"
                       :src="loadStaticResource('/icons/sidebar-arrow.svg')"
                       interactive
@@ -224,10 +224,10 @@
     <OOptionGroup :class="['set', { 'show-divider-bottom': showDividerBottom }]">
       <OOption
         v-for="(item, index) in setArr"
-        :id="item.id"
         :key="index"
-        :activeId="optionActiveId"
-        @click="handleRoute(item.id)">
+        :source="item"
+        :activeId="activeId"
+        @click="handleRoute(item)">
         <template #left>
           <OIcon :src="item.icon!" />
           <label>{{ item.label }}</label>
@@ -243,7 +243,7 @@
 </template>
 
 <style scoped lang="scss">
-  .sidebar {
+  .main-sidebar {
     position: relative;
     display: flex;
     flex-direction: column;
