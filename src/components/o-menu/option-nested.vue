@@ -9,6 +9,7 @@
 
   defineProps<{
     source: MenuOption[]
+    mode?: 'collapse' | 'flyout'
   }>()
 
   // 自动获取上级深度

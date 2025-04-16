@@ -97,7 +97,7 @@
   <div class="o-menu">
     <div v-for="(group, index) in sourceData" :key="index" class="o-menu__group">
       <OOptionNested :source="group">
-        <template #default="{ optionData }">
+        <template #default="{ optionData, depth }">
           <OOption>
             <template #left>
               <OIcon :src="optionData.icon!" />

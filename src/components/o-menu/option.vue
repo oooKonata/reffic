@@ -12,7 +12,7 @@
 
   const emits = defineEmits<{
     (e: 'option-mouseenter', id?: string): void
-    (e: 'option-mouseleave', id?: string): void
+    (e: 'option-mouseleave'): void
   }>()
 
   const simActive = ref(false)
@@ -26,7 +26,7 @@
   }
   const handleMouseLeave = () => {
     simHover.value = false
-    emits('option-mouseleave', props.id)
+    emits('option-mouseleave')
   }
 </script>
 

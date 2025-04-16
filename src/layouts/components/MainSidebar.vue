@@ -141,7 +141,7 @@
                 :activeId="optionActiveId"
                 @click="handleRoute(optionData.id)"
                 @option-mouseenter="id => (optionHoverId = id!)"
-                @option-mouseleave="id => (optionHoverId = '')">
+                @option-mouseleave="() => (optionHoverId = '')">
                 <template #left>
                   <div :style="{ marginLeft: `${8 * depth}px` }">
                     <OIcon
@@ -191,12 +191,12 @@
                 :activeId="optionActiveId"
                 @click="handleRoute(optionData.id)"
                 @option-mouseenter="id => (optionHoverId = id!)"
-                @option-mouseleave="id => (optionHoverId = '')">
+                @option-mouseleave="() => (optionHoverId = '')">
                 <template #left>
                   <div :style="{ marginLeft: `${8 * depth}px` }">
                     <OIcon
                       v-if="optionHoverId === optionData.id && optionData.children!.length"
-                      :class="[{ 'is-unfold': !optionData.collapse }, { 'is-collapse': optionData.collapse }]"
+                      :class="[{ 'is-expand': !optionData.collapse }, { 'is-collapse': optionData.collapse }]"
                       :src="loadStaticResource('/icons/sidebar-arrow.svg')"
                       interactive
                       @click="optionData.collapse = !optionData.collapse" />
@@ -295,7 +295,7 @@
         flex-direction: column;
         gap: 16px;
         padding: 8px;
-        .is-unfold {
+        .is-expand {
           :deep(img) {
             transform: rotate(0deg);
             transition: 0.1s ease-in-out;
