@@ -28,7 +28,7 @@
       top: 0,
       left: '240px',
       zIndex: 9 + childDepth.value,
-      opacity: 0,
+      visibility: 'hidden',
     }
   })
 
@@ -46,7 +46,7 @@
   <div
     v-for="(item, index) in source"
     :key="index"
-    :class="['o-option-flyout']"
+    :class="['o-option-flyout', { 'is-disabled': item.disabled }]"
     @mouseenter="handleMouseEnter(item)"
     @mouseleave="handleMouseLeave">
     <slot :optionData="item" :depth="depth" />
@@ -81,12 +81,16 @@
       display: flex;
       flex-direction: column;
       gap: 1px;
-      cursor: inherit;
+    }
+
+    &.is-disabled {
+      pointer-events: none;
+      opacity: 0.5;
+      cursor: auto;
     }
   }
 
   .children.visible {
-    opacity: 1 !important;
-    transition: 0.2s ease-in-out;
+    visibility: visible !important;
   }
 </style>

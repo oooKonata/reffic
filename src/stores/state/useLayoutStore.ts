@@ -8,7 +8,7 @@ export const useLayoutStore = defineStore(
     const isSidebarResizing = ref(false)
 
     const MenuContext = ref<string | SidebarOption>()
-    const mousePisition = ref<{ x: number; y: number }>()
+    const mousePosition = ref<{ x: number; y: number }>()
 
     const orderFav = ref(1)
     const orderPriv = ref(2)
@@ -16,7 +16,7 @@ export const useLayoutStore = defineStore(
     return {
       isSidebarResizing,
       MenuContext,
-      mousePisition,
+      mousePosition,
       orderFav,
       orderPriv,
     }

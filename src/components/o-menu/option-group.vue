@@ -2,6 +2,10 @@
   defineOptions({
     name: 'OOptionGroup',
   })
+
+  defineExpose({
+    name: 'OOptionGroup',
+  })
 </script>
 
 <template>

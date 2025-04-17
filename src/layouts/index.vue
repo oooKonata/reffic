@@ -3,7 +3,7 @@
   import { useLayoutStore } from '@/stores/state/useLayoutStore'
   import MainSidebar from './components/MainSidebar.vue'
   import { ref } from 'vue'
-  import { OMenu } from '@/components/o-menu'
+  import ContextMenu from './components/ContextMenu.vue'
 
   const { isSidebarResizing } = storeToRefs(useLayoutStore())
   const sidebarWidth = ref(248)
@@ -16,9 +16,9 @@
     @mouseup="isSidebarResizing = false">
     <MainSidebar :sidebarWidth="sidebarWidth" />
     <div class="content"></div>
-    <!-- <div class="overlay">
-      <OMenu />
-    </div> -->
+    <div class="overlay">
+      <ContextMenu />
+    </div>
   </div>
 </template>
 
@@ -38,6 +38,7 @@
       position: absolute;
       width: 100%;
       height: 100%;
+      background-color: $o-b8;
     }
   }
 </style>

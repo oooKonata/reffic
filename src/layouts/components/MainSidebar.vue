@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import OIcon from '@/components/o-icon'
-  import { OOption, OOptionGroup, OOptionNested } from '@/components/o-menu'
+  import { OOption, OOptionGroup, OOptionGroupInstance, OOptionNested } from '@/components/o-menu'
   import { favArr, navArr, pageArr, setArr } from '../mock/sidebarData'
   import { loadStaticResource } from '@/assets'
   import { onMounted, ref } from 'vue'
@@ -19,7 +19,7 @@
     }
   )
 
-  const { isSidebarResizing, MenuContext, mousePisition, orderFav, orderPriv } = storeToRefs(useLayoutStore())
+  const { isSidebarResizing, MenuContext, mousePosition, orderFav, orderPriv } = storeToRefs(useLayoutStore())
 
   const isResizeDivHover = ref(false)
 
@@ -29,15 +29,14 @@
   const activeId = ref('home')
   const hoverId = ref('')
 
-  const scrollViewContentRef = ref<HTMLElement | null>(null)
-  // const navRef = ref<HTMLElement | null>(null)
-  const setRef = ref<HTMLElement | null>(null)
-  const handleSrcollView = throttle(
+  const scrollViewContentRef = ref<HTMLElement>()
+  const navRef = ref<OOptionGroupInstance>()
+  const setRef = ref<OOptionGroupInstance>()
+  const handleScrollView = throttle(
     () => {
       const { top, bottom } = scrollViewContentRef.value!.getBoundingClientRect()
-      // const { top, bottom } = document.querySelector('.scroll-view__content')!.getBoundingClientRect()
-      const navBottom = navRef.value!.getBoundingClientRect().bottom
-      const setTop = setRef.value!.getBoundingClientRect().top
+      const navBottom = navRef.value?.$el.getBoundingClientRect().bottom
+      const setTop = setRef.value?.$el.getBoundingClientRect().top
       showDividerTop.value = top < navBottom ? true : false
       showDividerBottom.value = bottom > setTop ? true : false
     },
@@ -47,7 +46,7 @@
 
   const handleMore = (data: string | SidebarOption, event: MouseEvent) => {
     MenuContext.value = data
-    mousePisition.value = {
+    mousePosition.value = {
       x: event.clientX,
       y: event.clientY,
     }
@@ -83,11 +82,8 @@
     activeId.value = data.id
   }
 
-  const navRef = ref()
   onMounted(() => {
-    handleSrcollView()
-    console.log('navRef11111 ', navRef.value)
-    console.log('scrollViewContentRef.value: ', scrollViewContentRef.value)
+    handleScrollView()
   })
 </script>
 
@@ -129,7 +125,7 @@
       </OOption>
     </OOptionGroup>
 
-    <div class="scroll-view" @scroll="handleSrcollView">
+    <div class="scroll-view" @scroll="handleScrollView">
       <div ref="scrollViewContentRef" class="scroll-view__content">
         <OOptionGroup v-if="favArr" class="fav" :style="{ order: orderFav }">
           <template #title>
@@ -161,7 +157,7 @@
                       :src="loadStaticResource('/icons/sidebar-arrow.svg')"
                       interactive
                       @click="optionData.collapse = !optionData.collapse" />
-                    <OIcon v-else :src="loadStaticResource('/icons/sidebar-page.svg')" interactive />
+                    <OIcon v-else :src="loadStaticResource('/icons/sidebar-page.svg')" />
                   </div>
                   <label>{{ optionData.label }}</label>
                 </template>
@@ -211,7 +207,7 @@
                       :src="loadStaticResource('/icons/sidebar-arrow.svg')"
                       interactive
                       @click="optionData.collapse = !optionData.collapse" />
-                    <OIcon v-else :src="loadStaticResource('/icons/sidebar-page.svg')" interactive />
+                    <OIcon v-else :src="loadStaticResource('/icons/sidebar-page.svg')" />
                   </div>
                   <label>{{ optionData.label }}</label>
                 </template>
@@ -265,7 +261,7 @@
     background-color: $o-bg;
     box-shadow: $o-b2 -1px 0 0 0 inset;
 
-    :deep(*) {
+    :deep(.o-option__left) {
       color: $o-b60;
       font-weight: 500;
     }

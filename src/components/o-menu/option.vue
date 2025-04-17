@@ -67,7 +67,7 @@
     color: $o-b80;
     font-size: 14px;
     line-height: 20px;
-    cursor: pointer;
+    cursor: inherit;
     user-select: none;
 
     // background-color: cyan;
@@ -94,6 +94,7 @@
 
     &.sim-hover {
       background-color: $o-b6;
+      cursor: pointer;
     }
 
     &.sim-active {
@@ -102,7 +103,7 @@
 
     &.is-active {
       background-color: $o-b6;
-      :deep(*) {
+      :deep(.o-option__left) {
         color: $o-b80;
       }
     }

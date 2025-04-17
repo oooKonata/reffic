@@ -1,7 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="graphics-symbol" viewBox="0 0 16 16"
-  class="arrowChevronSingleRightSmall"
-  style="width: 16px; height: 16px; display: block; fill: rgba(71, 70, 68, 0.6); flex-shrink: 0;">
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="graphics-symbol" viewBox="0 0 20 20" class="checkmark"
+  style="width: 16px; height: 16px; display: block; fill: inherit; flex-shrink: 0;">
   <path
-    d="M6.722 3.238a.625.625 0 1 0-.884.884L9.716 8l-3.878 3.878a.625.625 0 0 0 .884.884l4.32-4.32a.625.625 0 0 0 0-.884z">
+    d="M15.784 4.002a.625.625 0 0 1 .214.857L9.445 15.784a.625.625 0 0 1-1.01.085l-4.37-5.098a.625.625 0 0 1 .948-.814l3.806 4.44 6.109-10.181a.625.625 0 0 1 .857-.214">
   </path>
 </svg>
