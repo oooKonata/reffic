@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { MenuOption } from './types'
-  import { computed, ref } from 'vue'
+  import { computed, ref, watch } from 'vue'
   import { loadStaticResource } from '@/assets'
   import { OOption, OOptionFlyout } from '.'
   import OIcon from '../o-icon'
@@ -30,23 +30,11 @@
         label: '排序',
         icon: loadStaticResource('/icons/sidebar-file.svg'),
         children: [
-          { id: 'sort-by-name', label: '按名称排序', icon: loadStaticResource('/icons/sidebar-file.svg') },
-          {
-            id: 'sort-by-date',
-            label: '按日期排序',
-            icon: loadStaticResource('/icons/sidebar-file.svg'),
-            children: [
-              { id: 'sort-by-date-asc', label: '升序', icon: loadStaticResource('/icons/sidebar-file.svg') },
-              {
-                id: 'sort-by-date-desc',
-                label: '降序',
-                icon: loadStaticResource('/icons/sidebar-file.svg'),
-              },
-            ],
-          },
+          { id: 'manual', label: '手动' },
+          { id: 'last-edited', label: '上次编辑' },
         ],
       },
-      // { id: 'display', label: '显示', icon: loadStaticResource('/icons/sidebar-file.svg') },
+      { id: 'display', label: '显示', icon: loadStaticResource('/icons/sidebar-file.svg') },
     ],
     [
       {
@@ -60,69 +48,73 @@
         icon: loadStaticResource('/icons/sidebar-file.svg'),
       },
     ],
-    // [
-    //   {
-    //     id: 'move-to-fav',
-    //     label: '添加到最爱',
-    //     icon: loadStaticResource('/icons/menu-fav.svg'),
-    //   },
-    // ],
-    // [
-    //   { id: 'copy-link', label: '拷贝链接', icon: loadStaticResource('/icons/menu-copy-link.svg') },
-    //   {
-    //     id: 'duplicate',
-    //     label: '创建副本',
-    //     icon: loadStaticResource('/icons/menu-duplicate.svg'),
-    //     tip: '⌘D',
-    //   },
-    //   { id: 'rename', label: '重命名', icon: loadStaticResource('/icons/menu-rename.svg'), tip: '⌘⇧R' },
-    //   {
-    //     id: 'move-to',
-    //     label: '移动到',
-    //     icon: loadStaticResource('/icons/menu-move-to.svg'),
-    //     tip: '⌘⇧P',
-    //   },
-    //   {
-    //     id: 'move-to-trash',
-    //     label: '移至垃圾箱',
-    //     icon: loadStaticResource('/icons/menu-move-to-trash.svg'),
-    //   },
-    // ],
-    // [
-    //   {
-    //     id: 'open-in-new-tab',
-    //     label: '在新选项卡中打卡',
-    //     icon: loadStaticResource('/icons/menu-open-in-new-tab.svg'),
-    //     tip: '⌘⇧↵',
-    //   },
-    //   {
-    //     id: 'open-in-side-preview',
-    //     label: '在侧边预览中打开',
-    //     icon: loadStaticResource('/icons/menu-open-in-side-preview.svg'),
-    //     tip: '⌥Click',
-    //   },
-    // ],
+    [
+      {
+        id: 'move-to-fav',
+        label: '添加到最爱',
+        icon: loadStaticResource('/icons/menu-fav.svg'),
+      },
+    ],
+    [
+      { id: 'copy-link', label: '拷贝链接', icon: loadStaticResource('/icons/menu-copy-link.svg') },
+      {
+        id: 'duplicate',
+        label: '创建副本',
+        icon: loadStaticResource('/icons/menu-duplicate.svg'),
+        tip: '⌘D',
+      },
+      { id: 'rename', label: '重命名', icon: loadStaticResource('/icons/menu-rename.svg'), tip: '⌘⇧R' },
+      {
+        id: 'move-to',
+        label: '移动到',
+        icon: loadStaticResource('/icons/menu-move-to.svg'),
+        tip: '⌘⇧P',
+      },
+      {
+        id: 'move-to-trash',
+        label: '移至垃圾箱',
+        icon: loadStaticResource('/icons/menu-move-to-trash.svg'),
+      },
+    ],
+    [
+      {
+        id: 'open-in-new-tab',
+        label: '在新选项卡中打卡',
+        icon: loadStaticResource('/icons/menu-open-in-new-tab.svg'),
+        tip: '⌘⇧↵',
+      },
+      {
+        id: 'open-in-side-preview',
+        label: '在侧边预览中打开',
+        icon: loadStaticResource('/icons/menu-open-in-side-preview.svg'),
+        tip: '⌥Click',
+      },
+    ],
   ])
 
-  const activeId = ref<string>('')
-
-  const handleMouseEnter = (data?: MenuOption) => {
-    activeId.value = data?.id!
-  }
+  const activeIds = ref<string[]>([])
+  watch(activeIds, () => {
+    console.log('activeId: ', activeIds.value)
+  })
 </script>
 
 <template>
   <div class="o-menu">
     <div v-for="(group, index) in sourceData" :key="index" class="o-menu__group">
-      <OOptionFlyout :source="group">
+      <OOptionFlyout
+        :source="group"
+        :activeIds="activeIds"
+        :parentPath="[]"
+        @flyout-mouseenter="path => (activeIds = path)">
         <template #default="{ optionData }">
-          <OOption :activeId="activeId" :source="optionData" @option-mouseenter="handleMouseEnter">
+          <OOption :source="optionData" :flyoutActive="activeIds.includes(optionData.id)">
             <template #left>
-              <OIcon :src="optionData.icon!" />
+              <OIcon v-if="optionData.icon" :src="optionData.icon!" />
               <label>{{ optionData.label }}</label>
             </template>
             <template #right>
               <label>{{ optionData.tip }}</label>
+              <OIcon v-if="optionData.children" :src="loadStaticResource('/icons/menu-more.svg')" />
             </template>
           </OOption>
         </template>

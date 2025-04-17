@@ -7,8 +7,15 @@
     name: 'OOptionFlyout',
   })
 
-  defineProps<{
+  const props = defineProps<{
     source: MenuOption[]
+    activeIds: string[]
+    parentPath: string[]
+  }>()
+
+  const emits = defineEmits<{
+    (e: 'flyout-mouseenter', path: string[]): void
+    (e: 'flyout-mouseleave'): void
   }>()
 
   // 深度管理
@@ -21,18 +28,37 @@
       top: 0,
       left: '240px',
       zIndex: 9 + childDepth.value,
-      opacity: 0.5,
+      opacity: 0,
     }
   })
+
+  const handleMouseEnter = (item: MenuOption) => {
+    const path = [...(props.parentPath || []), item.id]
+    emits('flyout-mouseenter', path)
+  }
+
+  const handleMouseLeave = () => {
+    emits('flyout-mouseleave')
+  }
 </script>
 
 <template>
-  <div v-for="(item, index) in source" :key="index" class="o-option-flyout">
+  <div
+    v-for="(item, index) in source"
+    :key="index"
+    :class="['o-option-flyout']"
+    @mouseenter="handleMouseEnter(item)"
+    @mouseleave="handleMouseLeave">
     <slot :optionData="item" :depth="depth" />
 
     <template v-if="item.children?.length">
-      <div class="children" :style="childStyles">
-        <OOptionFlyout :source="item.children!">
+      <div :class="['children', { visible: activeIds.includes(item.id) }]" :style="childStyles">
+        <OOptionFlyout
+          :source="item.children"
+          :activeIds="activeIds"
+          :parentPath="parentPath.concat(item.id)"
+          @flyout-mouseenter="path => emits('flyout-mouseenter', path)"
+          @flyout-mouseleave="emits('flyout-mouseleave')">
           <template v-for="(_, slotName) in $slots" #[slotName]="scope: { optionData: MenuOption, depth: number }">
             <slot :name="slotName" v-bind="scope" />
           </template>
@@ -44,6 +70,7 @@
 
 <style scoped lang="scss">
   .o-option-flyout {
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 1px;
@@ -58,7 +85,8 @@
     }
   }
 
-  :deep(.o-option.is-active + .children) {
+  .children.visible {
     opacity: 1 !important;
+    transition: 0.2s ease-in-out;
   }
 </style>

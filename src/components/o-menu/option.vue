@@ -9,6 +9,7 @@
   const props = defineProps<{
     source?: MenuOption
     activeId?: string
+    flyoutActive?: boolean // 侧浮出菜单中激活状态
   }>()
 
   const emits = defineEmits<{
@@ -33,7 +34,12 @@
 
 <template>
   <div
-    :class="['o-option', { 'sim-active': simActive }, { 'sim-hover': simHover }, { 'is-active': isActive }]"
+    :class="[
+      'o-option',
+      { 'sim-active': simActive },
+      { 'sim-hover': simHover },
+      { 'is-active': isActive || flyoutActive },
+    ]"
     @mousedown="simActive = true"
     @mouseup="simActive = false"
     @mouseenter="handleMouseEnter"

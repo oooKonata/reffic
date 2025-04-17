@@ -16,9 +16,9 @@
     @mouseup="isSidebarResizing = false">
     <MainSidebar :sidebarWidth="sidebarWidth" />
     <div class="content"></div>
-    <div class="overlay">
+    <!-- <div class="overlay">
       <OMenu />
-    </div>
+    </div> -->
   </div>
 </template>
 

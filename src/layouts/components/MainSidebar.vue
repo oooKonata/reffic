@@ -3,7 +3,7 @@
   import { OOption, OOptionGroup, OOptionNested } from '@/components/o-menu'
   import { favArr, navArr, pageArr, setArr } from '../mock/sidebarData'
   import { loadStaticResource } from '@/assets'
-  import { ref } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { storeToRefs } from 'pinia'
   import { useLayoutStore } from '@/stores/state/useLayoutStore'
   import { throttle } from 'lodash-es'
@@ -29,11 +29,15 @@
   const activeId = ref('home')
   const hoverId = ref('')
 
+  const scrollViewContentRef = ref<HTMLElement | null>(null)
+  // const navRef = ref<HTMLElement | null>(null)
+  const setRef = ref<HTMLElement | null>(null)
   const handleSrcollView = throttle(
     () => {
-      const { top, bottom } = document.querySelector('.scroll-view__content')!.getBoundingClientRect()
-      const navBottom = document.querySelector('.nav')!.getBoundingClientRect().bottom
-      const setTop = document.querySelector('.set')!.getBoundingClientRect().top
+      const { top, bottom } = scrollViewContentRef.value!.getBoundingClientRect()
+      // const { top, bottom } = document.querySelector('.scroll-view__content')!.getBoundingClientRect()
+      const navBottom = navRef.value!.getBoundingClientRect().bottom
+      const setTop = setRef.value!.getBoundingClientRect().top
       showDividerTop.value = top < navBottom ? true : false
       showDividerBottom.value = bottom > setTop ? true : false
     },
@@ -78,6 +82,13 @@
   const handleRoute = (data: SidebarOption) => {
     activeId.value = data.id
   }
+
+  const navRef = ref()
+  onMounted(() => {
+    handleSrcollView()
+    console.log('navRef11111 ', navRef.value)
+    console.log('scrollViewContentRef.value: ', scrollViewContentRef.value)
+  })
 </script>
 
 <template>
@@ -104,7 +115,7 @@
       </OOption>
     </div>
 
-    <OOptionGroup :class="['nav', { 'show-divider-top': showDividerTop }]">
+    <OOptionGroup ref="navRef" :class="['nav', { 'show-divider-top': showDividerTop }]">
       <OOption
         v-for="(item, index) in navArr"
         :key="index"
@@ -119,7 +130,7 @@
     </OOptionGroup>
 
     <div class="scroll-view" @scroll="handleSrcollView">
-      <div class="scroll-view__content">
+      <div ref="scrollViewContentRef" class="scroll-view__content">
         <OOptionGroup v-if="favArr" class="fav" :style="{ order: orderFav }">
           <template #title>
             <OOption>
@@ -221,7 +232,7 @@
       </div>
     </div>
 
-    <OOptionGroup :class="['set', { 'show-divider-bottom': showDividerBottom }]">
+    <OOptionGroup ref="setRef" :class="['set', { 'show-divider-bottom': showDividerBottom }]">
       <OOption
         v-for="(item, index) in setArr"
         :key="index"
