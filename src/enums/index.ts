@@ -1,0 +1,6 @@
+export enum MENU_TYPE {
+  FAV_TITLE = 'FAV_TITLE',
+  PRIV_TITLE = 'PRIV_TITLE',
+  FAV_PAGE = 'FAV_PAGE',
+  PRIV_PAGE = 'PRIV_PAGE',
+}

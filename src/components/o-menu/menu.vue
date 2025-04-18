@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { MenuOption } from './types'
-  import { computed, ref, watch } from 'vue'
+  import { ref } from 'vue'
   import { loadStaticResource } from '@/assets'
   import { OOption, OOptionFlyout } from '.'
   import OIcon from '../o-icon'
@@ -9,9 +9,18 @@
     name: 'OMenu',
   })
 
-  defineProps<{
-    source: MenuOption[][]
-  }>()
+  withDefaults(
+    defineProps<{
+      source: MenuOption[][]
+      position: {
+        x: number
+        y: number
+      }
+    }>(),
+    {
+      position: () => ({ x: 0, y: 0 }),
+    }
+  )
 
   const emits = defineEmits<{
     (e: 'option-select', data: MenuOption): void
@@ -27,7 +36,7 @@
 </script>
 
 <template>
-  <div class="o-menu">
+  <div class="o-menu" :style="{ left: `${position.x}px`, top: `${position.y}px` }">
     <div v-for="(group, index) in source" :key="index" class="o-menu__group">
       <OOptionFlyout
         :source="group"
@@ -37,11 +46,15 @@
         <template #default="{ optionData }">
           <OOption
             :source="optionData"
-            :flyoutActive="activeIds.includes(optionData.id)"
+            :isFlyoutActive="activeIds.includes(optionData.id)"
             @click="handleClick(optionData)">
             <template #left>
-              <OIcon v-if="optionData.icon" :src="optionData.icon!" />
-              <label>{{ optionData.label }}</label>
+              <OIcon
+                v-if="optionData.icon"
+                :src="activeIds.includes(optionData.id) && optionData.meta?.warn  ? optionData.meta.warnIcon : optionData.icon!" />
+              <label :class="{ 'is-warn': activeIds.includes(optionData.id) && optionData.meta?.warn }">{{
+                optionData.label
+              }}</label>
             </template>
             <template #right>
               <label>{{ optionData.tip }}</label>
@@ -62,8 +75,6 @@
     flex-direction: column;
     gap: 1px;
     position: absolute;
-    top: 30px;
-    left: 248px;
     width: 248px;
     max-height: 70vh;
     overflow-x: visible;
@@ -100,6 +111,10 @@
         border-radius: 8px;
         background-color: #fff;
         box-shadow: $o-b10 0px 14px 28px -6px, $o-b6 0px 2px 4px -1px, $o-b8 0px 0px 0px 1px;
+      }
+
+      :deep(.is-warn) {
+        color: $o-warn;
       }
     }
   }

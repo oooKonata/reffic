@@ -25,6 +25,7 @@
 
   const childStyles = computed((): CSSProperties => {
     return {
+      position: 'absolute',
       top: 0,
       left: '240px',
       zIndex: 9 + childDepth.value,
@@ -77,7 +78,6 @@
     position: relative;
 
     .children {
-      position: absolute;
       display: flex;
       flex-direction: column;
       gap: 1px;

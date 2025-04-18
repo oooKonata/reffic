@@ -3,12 +3,13 @@
   import { OOption, OOptionGroup, OOptionGroupInstance, OOptionNested } from '@/components/o-menu'
   import { favArr, navArr, pageArr, setArr } from '../mock/sidebarData'
   import { loadStaticResource } from '@/assets'
-  import { onMounted, ref } from 'vue'
+  import { onMounted, onUnmounted, ref } from 'vue'
   import { storeToRefs } from 'pinia'
   import { useLayoutStore } from '@/stores/state/useLayoutStore'
   import { throttle } from 'lodash-es'
   import { SidebarOption } from '../types'
   import { v4 as uuidv4 } from 'uuid'
+  import { MENU_TYPE } from '@/enums'
 
   withDefaults(
     defineProps<{
@@ -19,7 +20,7 @@
     }
   )
 
-  const { isSidebarResizing, MenuContext, mousePosition, orderFav, orderPriv } = storeToRefs(useLayoutStore())
+  const { isSidebarResizing, sidebarMenuContext, orderFav, orderPriv } = storeToRefs(useLayoutStore())
 
   const isResizeDivHover = ref(false)
 
@@ -29,11 +30,13 @@
   const activeId = ref('home')
   const hoverId = ref('')
 
-  const scrollViewContentRef = ref<HTMLElement>()
-  const navRef = ref<OOptionGroupInstance>()
-  const setRef = ref<OOptionGroupInstance>()
-  const handleScrollView = throttle(
+  const scrollViewContentRef = ref<HTMLElement | null>(null)
+  const navRef = ref<OOptionGroupInstance | null>(null)
+  const setRef = ref<OOptionGroupInstance | null>(null)
+
+  const handleScroll = throttle(
     () => {
+      if (!scrollViewContentRef.value || !navRef.value || !setRef.value) return
       const { top, bottom } = scrollViewContentRef.value!.getBoundingClientRect()
       const navBottom = navRef.value?.$el.getBoundingClientRect().bottom
       const setTop = setRef.value?.$el.getBoundingClientRect().top
@@ -44,11 +47,13 @@
     { leading: false, trailing: true }
   )
 
-  const handleMore = (data: string | SidebarOption, event: MouseEvent) => {
-    MenuContext.value = data
-    mousePosition.value = {
-      x: event.clientX,
-      y: event.clientY,
+  const handleMore = (context: { menuType: MENU_TYPE; context?: SidebarOption }, event: MouseEvent) => {
+    sidebarMenuContext.value = {
+      ...context,
+      position: {
+        x: event.clientX,
+        y: event.clientY,
+      },
     }
   }
 
@@ -83,7 +88,7 @@
   }
 
   onMounted(() => {
-    handleScrollView()
+    handleScroll()
   })
 </script>
 
@@ -125,7 +130,7 @@
       </OOption>
     </OOptionGroup>
 
-    <div class="scroll-view" @scroll="handleScrollView">
+    <div class="scroll-view" @scroll="handleScroll">
       <div ref="scrollViewContentRef" class="scroll-view__content">
         <OOptionGroup v-if="favArr" class="fav" :style="{ order: orderFav }">
           <template #title>
@@ -137,7 +142,7 @@
                 <OIcon
                   :src="loadStaticResource('/icons/sidebar-more.svg')"
                   interactive
-                  @click="handleMore('fav', $event)" />
+                  @click="handleMore({ menuType: MENU_TYPE.FAV_TITLE }, $event)" />
               </template>
             </OOption>
           </template>
@@ -165,7 +170,7 @@
                   <OIcon
                     :src="loadStaticResource('/icons/sidebar-more.svg')"
                     interactive
-                    @click="handleMore(optionData, $event)" />
+                    @click="handleMore({ menuType: MENU_TYPE.FAV_PAGE, context: optionData }, $event)" />
                   <OIcon
                     :src="loadStaticResource('/icons/sidebar-add.svg')"
                     interactive
@@ -186,7 +191,7 @@
                 <OIcon
                   :src="loadStaticResource('/icons/sidebar-more.svg')"
                   interactive
-                  @click="handleMore('priv', $event)" />
+                  @click="handleMore({ menuType: MENU_TYPE.PRIV_TITLE }, $event)" />
                 <OIcon :src="loadStaticResource('/icons/sidebar-add.svg')" interactive @click="handleAdd()" />
               </template>
             </OOption>
@@ -215,7 +220,7 @@
                   <OIcon
                     :src="loadStaticResource('/icons/sidebar-more.svg')"
                     interactive
-                    @click="handleMore(optionData, $event)" />
+                    @click="handleMore({ menuType: MENU_TYPE.PRIV_PAGE, context: optionData }, $event)" />
                   <OIcon
                     :src="loadStaticResource('/icons/sidebar-add.svg')"
                     interactive
