@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { MenuOption } from './types'
-  import { ref } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { loadStaticResource } from '@/assets'
   import { OOption, OOptionFlyout } from '.'
   import OIcon from '../o-icon'
@@ -9,7 +9,7 @@
     name: 'OMenu',
   })
 
-  withDefaults(
+  const props = withDefaults(
     defineProps<{
       source: MenuOption[][]
       position: {
@@ -28,11 +28,37 @@
 
   const activeIds = ref<string[]>([])
 
-  const handleClick = (data: MenuOption) => {
-    if (!data.disabled) {
-      emits('option-select', data)
+  const selectedOption = ref<Record<string, string>>({})
+
+  const initSelectedOptions = (source: MenuOption[][]) => {
+    const selectedOption: Record<string, string> = {}
+    source.forEach(group => {
+      group.forEach(item => {
+        if (item.children) {
+          const selectedChild = item.children.find(child => child.meta?.selected)
+          if (selectedChild) {
+            selectedOption[item.id] = selectedChild.label
+          }
+        }
+      })
+    })
+    return selectedOption
+  }
+
+  const handleClick = (optionData: MenuOption, parentData: MenuOption) => {
+    console.log('parentData: ', parentData)
+    if (!optionData.disabled && parentData) {
+      selectedOption.value[parentData.id] = optionData.label
+      console.log('selectedOption.value: ', selectedOption.value)
+      emits('option-select', optionData)
+
+      // 替换tip
     }
   }
+
+  onMounted(() => {
+    selectedOption.value = initSelectedOptions(props.source)
+  })
 </script>
 
 <template>
@@ -43,11 +69,11 @@
         :activeIds="activeIds"
         :parentPath="[]"
         @flyout-mouseenter="path => (activeIds = path)">
-        <template #default="{ optionData }">
+        <template #default="{ optionData, parentData }">
           <OOption
             :source="optionData"
             :isFlyoutActive="activeIds.includes(optionData.id)"
-            @click="handleClick(optionData)">
+            @click="handleClick(optionData, parentData!)">
             <template #left>
               <OIcon
                 v-if="optionData.icon"

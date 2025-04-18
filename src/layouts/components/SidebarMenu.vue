@@ -17,18 +17,6 @@
       menuOptions.value = [
         [
           {
-            id: 'order',
-            label: '排序',
-            icon: loadStaticResource('/icons/menu-order.svg'),
-            children: [
-              { id: 'manual', label: '手动', meta: { selected: true } },
-              { id: 'last-edited', label: '上次编辑', meta: { selected: false } },
-            ],
-          },
-          { id: 'display', label: '显示', icon: loadStaticResource('/icons/menu-display.svg') },
-        ],
-        [
-          {
             id: 'move-up',
             label: '向上移动',
             icon: loadStaticResource('/icons/menu-move-up.svg'),
@@ -54,7 +42,18 @@
               { id: 'last-edited', label: '上次编辑', meta: { selected: false } },
             ],
           },
-          { id: 'display', label: '显示', icon: loadStaticResource('/icons/menu-display.svg') },
+          {
+            id: 'display',
+            label: '显示',
+            icon: loadStaticResource('/icons/menu-display.svg'),
+            children: [
+              { id: '5', label: '5个项目', meta: { selected: false } },
+              { id: '10', label: '10个项目', meta: { selected: false } },
+              { id: '15', label: '15个项目', meta: { selected: false } },
+              { id: '20', label: '20个项目', meta: { selected: false } },
+              { id: 'all', label: '全部', meta: { selected: true } },
+            ],
+          },
 
           {
             id: 'move-up',

@@ -11,6 +11,7 @@
     source: MenuOption[]
     activeIds: string[]
     parentPath: string[]
+    parentData?: MenuOption
   }>()
 
   const emits = defineEmits<{
@@ -50,7 +51,7 @@
     :class="['o-option-flyout', { 'is-disabled': item.disabled }]"
     @mouseenter="handleMouseEnter(item)"
     @mouseleave="handleMouseLeave">
-    <slot :optionData="item" :depth="depth" />
+    <slot :optionData="item" :depth="depth" :parentData="parentData" />
 
     <template v-if="item.children?.length">
       <div :class="['children', { visible: activeIds.includes(item.id) }]" :style="childStyles">
@@ -58,9 +59,12 @@
           :source="item.children"
           :activeIds="activeIds"
           :parentPath="parentPath.concat(item.id)"
+          :parentData="item"
           @flyout-mouseenter="path => emits('flyout-mouseenter', path)"
           @flyout-mouseleave="emits('flyout-mouseleave')">
-          <template v-for="(_, slotName) in $slots" #[slotName]="scope: { optionData: MenuOption, depth: number }">
+          <template
+            v-for="(_, slotName) in $slots"
+            #[slotName]="scope: { optionData: MenuOption, depth: number, parentData: MenuOption }">
             <slot :name="slotName" v-bind="scope" />
           </template>
         </OOptionFlyout>
