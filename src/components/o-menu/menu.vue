@@ -28,36 +28,30 @@
 
   const activeIds = ref<string[]>([])
 
-  const selectedOption = ref<Record<string, string>>({})
-
   const initSelectedOptions = (source: MenuOption[][]) => {
-    const selectedOption: Record<string, string> = {}
     source.forEach(group => {
       group.forEach(item => {
         if (item.children) {
+          // 初始化，父级 tip 为子级选中项的 label
           const selectedChild = item.children.find(child => child.meta?.selected)
-          if (selectedChild) {
-            selectedOption[item.id] = selectedChild.label
-          }
+          item.tip = selectedChild?.label ?? item.tip
         }
       })
     })
-    return selectedOption
   }
 
   const handleClick = (optionData: MenuOption, parentData: MenuOption) => {
-    console.log('parentData: ', parentData)
     if (!optionData.disabled && parentData) {
-      selectedOption.value[parentData.id] = optionData.label
-      console.log('selectedOption.value: ', selectedOption.value)
+      parentData.children?.forEach(item => {
+        item.meta!.selected = item.id !== optionData.id ? false : true
+      })
+      parentData.tip = optionData.label
       emits('option-select', optionData)
-
-      // 替换tip
     }
   }
 
   onMounted(() => {
-    selectedOption.value = initSelectedOptions(props.source)
+    initSelectedOptions(props.source)
   })
 </script>
 

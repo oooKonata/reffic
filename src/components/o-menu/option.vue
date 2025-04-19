@@ -82,6 +82,7 @@
     &__right {
       display: flex;
       justify-content: end;
+      align-items: center;
       gap: 4px;
     }
 
