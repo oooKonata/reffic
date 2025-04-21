@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { storeToRefs } from 'pinia'
-  import { useLayoutStore } from '@/stores/state/useLayoutStore'
+  import { useStateStore } from '@/stores/sidebar/useStateStore'
   import MainSidebar from './components/MainSidebar.vue'
   import { ref, watch } from 'vue'
   import SidebarMenu from './components/SidebarMenu.vue'
 
-  const { isSidebarResizing, sidebarMenuContext } = storeToRefs(useLayoutStore())
+  const { isSidebarResizing, sidebarMenuContext } = storeToRefs(useStateStore())
 
   const sidebarWidth = ref(248)
   const isOnSidebarMenu = ref(false)

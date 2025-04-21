@@ -23,7 +23,7 @@
   )
 
   const emits = defineEmits<{
-    (e: 'option-select', data: MenuOption): void
+    (e: 'option-select', data: MenuOption, parentData: MenuOption): void
   }>()
 
   const activeIds = ref<string[]>([])
@@ -46,7 +46,9 @@
         item.meta!.selected = item.id !== optionData.id ? false : true
       })
       parentData.tip = optionData.label
-      emits('option-select', optionData)
+      console.log('props', props.source)
+
+      emits('option-select', optionData, parentData)
     }
   }
 

@@ -5,7 +5,7 @@
   import { loadStaticResource } from '@/assets'
   import { onMounted, onUnmounted, ref } from 'vue'
   import { storeToRefs } from 'pinia'
-  import { useLayoutStore } from '@/stores/state/useLayoutStore'
+  import { useStateStore } from '@/stores/sidebar/useStateStore'
   import { throttle } from 'lodash-es'
   import { SidebarOption } from '../types'
   import { v4 as uuidv4 } from 'uuid'
@@ -20,7 +20,10 @@
     }
   )
 
-  const { isSidebarResizing, sidebarMenuContext, orderFav, orderPriv } = storeToRefs(useLayoutStore())
+  const { isSidebarResizing, sidebarMenuContext, orderFav, orderPriv } = storeToRefs(useStateStore())
+
+  const favToggle = ref(true)
+  const privToggle = ref(true)
 
   const isResizeDivHover = ref(false)
 
@@ -134,7 +137,7 @@
       <div ref="scrollViewContentRef" class="scroll-view__content">
         <OOptionGroup v-if="favArr" class="fav" :style="{ order: orderFav }">
           <template #title>
-            <OOption>
+            <OOption @click="favToggle = !favToggle">
               <template #left>
                 <label class="title">最爱</label>
               </template>
@@ -146,7 +149,7 @@
               </template>
             </OOption>
           </template>
-          <OOptionNested :source="favArr">
+          <OOptionNested v-if="favToggle" :source="favArr">
             <template #default="{ optionData, depth }">
               <OOption
                 :source="optionData"
@@ -183,7 +186,7 @@
 
         <OOptionGroup class="priv" :style="{ order: orderPriv }">
           <template #title>
-            <OOption>
+            <OOption @click="privToggle = !privToggle">
               <template #left>
                 <label class="title">私人</label>
               </template>
@@ -196,7 +199,7 @@
               </template>
             </OOption>
           </template>
-          <OOptionNested :source="pageArr">
+          <OOptionNested v-if="privToggle" :source="pageArr">
             <template #default="{ optionData, depth }">
               <OOption
                 :source="optionData"

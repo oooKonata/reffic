@@ -1,9 +1,9 @@
 import { MENU_TYPE } from '@/enums'
 import { SidebarOption } from '@/layouts/types'
 import { defineStore } from 'pinia'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
-export const useLayoutStore = defineStore(
+export const useStateStore = defineStore(
   'o-state',
   () => {
     const isSidebarResizing = ref(false)
