@@ -6,16 +6,23 @@
   import { MenuOption } from '@/components/o-menu/types'
   import { OMenu } from '@/components/o-menu'
   import { MENU_TYPE } from '@/enums'
+  import { favArr, pageArr } from '../mock/sidebarData'
 
   const { sidebarMenuContext } = storeToRefs(useStateStore())
   const { menuData } = storeToRefs(useMenuStore())
-  const isFav = computed(() => sidebarMenuContext.value?.context?.meta?.fav)
   const menuType = computed((): MENU_TYPE => sidebarMenuContext.value?.menuType!)
 
   const menuOptions = ref<MenuOption[][]>([])
   menuOptions.value = menuData.value[menuType.value]
 
-  const handleSelect = (data: MenuOption, parentData: MenuOption) => {}
+  const handleSelect = (data: MenuOption, parentData: MenuOption) => {
+    if (data.id === 'move-to-fav') {
+      sidebarMenuContext.value!.context!.meta!.fav = true
+      favArr.value!.unshift(sidebarMenuContext.value!.context!)
+    }
+
+    sidebarMenuContext.value = undefined
+  }
 </script>
 
 <template>

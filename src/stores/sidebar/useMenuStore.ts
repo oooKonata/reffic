@@ -2,14 +2,14 @@ import { defineStore, storeToRefs } from 'pinia'
 import { loadStaticResource } from '@/assets'
 import { MenuOption } from '@/components/o-menu/types'
 import { MENU_TYPE } from '@/enums'
-import { computed, ref } from 'vue'
+import { ref, toRef, watch } from 'vue'
 import { useStateStore } from './useStateStore'
 
 export const useMenuStore = defineStore(
   'o-menu',
   () => {
-    const { sidebarMenuContext } = storeToRefs(useStateStore())
-    const isFav = computed(() => sidebarMenuContext.value?.context?.meta?.fav)
+    const { sidebarMenuContext, orderFav, orderPriv } = storeToRefs(useStateStore())
+    const isFav = sidebarMenuContext.value?.context?.meta?.fav
 
     const menuData = ref<Record<MENU_TYPE, MenuOption[][]>>({
       [MENU_TYPE.FAV_TITLE]: [
@@ -18,12 +18,13 @@ export const useMenuStore = defineStore(
             id: 'move-up',
             label: '向上移动',
             icon: loadStaticResource('/icons/menu-move-up.svg'),
+            disabled: orderPriv > orderFav ? false : true,
           },
           {
             id: 'move-down',
             label: '向下移动',
             icon: loadStaticResource('/icons/menu-move-down.svg'),
-            disabled: true,
+            disabled: orderPriv > orderFav ? true : false,
           },
         ],
       ],
@@ -54,66 +55,23 @@ export const useMenuStore = defineStore(
             id: 'move-up',
             label: '向上移动',
             icon: loadStaticResource('/icons/menu-move-up.svg'),
+            disabled: orderPriv > orderFav ? true : false,
           },
           {
             id: 'move-down',
             label: '向下移动',
             icon: loadStaticResource('/icons/menu-move-down.svg'),
-            disabled: true,
+            disabled: orderPriv > orderFav ? false : true,
           },
         ],
       ],
-      [MENU_TYPE.FAV_PAGE]: [
+
+      [MENU_TYPE.THE_PAGE]: [
         [
           {
-            id: 'remove-from-fav',
-            label: '从最爱中移除',
-            icon: loadStaticResource('/icons/menu-fav-remove.svg'),
-          },
-        ],
-        [
-          { id: 'copy-link', label: '拷贝链接', icon: loadStaticResource('/icons/menu-copy-link.svg') },
-          {
-            id: 'duplicate',
-            label: '创建副本',
-            icon: loadStaticResource('/icons/menu-duplicate.svg'),
-            tip: '⌘D',
-          },
-          { id: 'rename', label: '重命名', icon: loadStaticResource('/icons/menu-rename.svg'), tip: '⌘⇧R' },
-          {
-            id: 'move-to',
-            label: '移动到',
-            icon: loadStaticResource('/icons/menu-move-to.svg'),
-            tip: '⌘⇧P',
-          },
-          {
-            id: 'move-to-trash',
-            label: '移至垃圾箱',
-            icon: loadStaticResource('/icons/menu-move-to-trash.svg'),
-            meta: { warn: true, warnIcon: loadStaticResource('/icons/menu-move-to-trash-warn.svg') },
-          },
-        ],
-        [
-          {
-            id: 'open-in-new-tab',
-            label: '在新选项卡中打卡',
-            icon: loadStaticResource('/icons/menu-open-in-new-tab.svg'),
-            tip: '⌘⇧↵',
-          },
-          {
-            id: 'open-in-side-preview',
-            label: '在侧边预览中打开',
-            icon: loadStaticResource('/icons/menu-open-in-side-preview.svg'),
-            tip: '⌥Click',
-          },
-        ],
-      ],
-      [MENU_TYPE.PRIV_PAGE]: [
-        [
-          {
-            id: 'move-to-fav',
-            label: '添加到最爱',
-            icon: loadStaticResource('/icons/menu-fav.svg'),
+            id: isFav ? 'remove-from-fav' : 'move-to-fav',
+            label: isFav ? '从最爱中移除' : '添加到最爱',
+            icon: isFav ? loadStaticResource('/icons/menu-fav-remove.svg') : loadStaticResource('/icons/menu-fav.svg'),
           },
         ],
         [

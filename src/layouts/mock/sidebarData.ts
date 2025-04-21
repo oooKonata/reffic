@@ -17,7 +17,7 @@ const setArr = ref<SidebarOption[]>([
   { id: 'share', label: '分享', icon: loadStaticResource('/icons/sidebar-share.svg') },
 ])
 
-const favArr = ref<SidebarOption[]>()
+const favArr = ref<SidebarOption[]>([])
 
 const pageArr = ref<SidebarOption[]>([
   {

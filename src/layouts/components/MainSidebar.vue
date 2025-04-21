@@ -20,7 +20,7 @@
     }
   )
 
-  const { isSidebarResizing, sidebarMenuContext, orderFav, orderPriv } = storeToRefs(useStateStore())
+  const { isSidebarResizing, sidebarMenuContext, orderFav, orderPriv, showSidebarMenu } = storeToRefs(useStateStore())
 
   const favToggle = ref(true)
   const privToggle = ref(true)
@@ -135,7 +135,7 @@
 
     <div class="scroll-view" @scroll="handleScroll">
       <div ref="scrollViewContentRef" class="scroll-view__content">
-        <OOptionGroup v-if="favArr" class="fav" :style="{ order: orderFav }">
+        <OOptionGroup v-if="favArr.length" class="fav" :style="{ order: orderFav }">
           <template #title>
             <OOption @click="favToggle = !favToggle">
               <template #left>
@@ -173,7 +173,7 @@
                   <OIcon
                     :src="loadStaticResource('/icons/sidebar-more.svg')"
                     interactive
-                    @click="handleMore({ menuType: MENU_TYPE.FAV_PAGE, context: optionData }, $event)" />
+                    @click="handleMore({ menuType: MENU_TYPE.THE_PAGE, context: optionData }, $event)" />
                   <OIcon
                     :src="loadStaticResource('/icons/sidebar-add.svg')"
                     interactive
@@ -223,7 +223,7 @@
                   <OIcon
                     :src="loadStaticResource('/icons/sidebar-more.svg')"
                     interactive
-                    @click="handleMore({ menuType: MENU_TYPE.PRIV_PAGE, context: optionData }, $event)" />
+                    @click="handleMore({ menuType: MENU_TYPE.THE_PAGE, context: optionData }, $event)" />
                   <OIcon
                     :src="loadStaticResource('/icons/sidebar-add.svg')"
                     interactive

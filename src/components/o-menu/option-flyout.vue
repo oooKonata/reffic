@@ -48,7 +48,7 @@
   <div
     v-for="(item, index) in source"
     :key="index"
-    :class="['o-option-flyout', { 'is-disabled': item.disabled }]"
+    :class="['o-option-flyout']"
     @mouseenter="handleMouseEnter(item)"
     @mouseleave="handleMouseLeave">
     <slot :optionData="item" :depth="depth" :parentData="parentData" />
@@ -85,12 +85,6 @@
       display: flex;
       flex-direction: column;
       gap: 1px;
-    }
-
-    &.is-disabled {
-      pointer-events: none;
-      opacity: 0.5;
-      cursor: auto;
     }
   }
 

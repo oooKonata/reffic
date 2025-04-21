@@ -41,15 +41,13 @@
   }
 
   const handleClick = (optionData: MenuOption, parentData: MenuOption) => {
-    if (!optionData.disabled && parentData) {
+    if (parentData) {
       parentData.children?.forEach(item => {
         item.meta!.selected = item.id !== optionData.id ? false : true
       })
       parentData.tip = optionData.label
-      console.log('props', props.source)
-
-      emits('option-select', optionData, parentData)
     }
+    emits('option-select', optionData, parentData)
   }
 
   onMounted(() => {
@@ -68,7 +66,8 @@
         <template #default="{ optionData, parentData }">
           <OOption
             :source="optionData"
-            :isFlyoutActive="activeIds.includes(optionData.id)"
+            :isDiasbled="optionData.disabled"
+            :isFlyoutActive="activeIds.includes(optionData.id) && !optionData.disabled"
             @click="handleClick(optionData, parentData!)">
             <template #left>
               <OIcon
