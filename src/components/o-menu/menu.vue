@@ -42,9 +42,9 @@
 
   const handleClick = (optionData: MenuOption, parentData: MenuOption) => {
     if (parentData) {
-      parentData.children?.forEach(item => {
-        item.meta!.selected = item.id !== optionData.id ? false : true
-      })
+      // parentData.children?.forEach(item => {
+      //   item.meta!.selected = item.id !== optionData.id ? false : true
+      // })
       parentData.tip = optionData.label
     }
     emits('option-select', optionData, parentData)

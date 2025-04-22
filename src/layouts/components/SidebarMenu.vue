@@ -2,23 +2,150 @@
   import { storeToRefs } from 'pinia'
   import { computed, ref } from 'vue'
   import { useStateStore } from '@/stores/sidebar/useStateStore'
-  import { useMenuStore } from '@/stores/sidebar/useMenuStore'
   import { MenuOption } from '@/components/o-menu/types'
   import { OMenu } from '@/components/o-menu'
   import { MENU_TYPE } from '@/enums'
-  import { favArr, pageArr } from '../mock/sidebarData'
+  import { favArr } from '../mock/sidebarData'
+  import { loadStaticResource } from '@/assets'
+  import { useMenuStore } from '@/stores/sidebar/useMenuStore'
 
-  const { sidebarMenuContext } = storeToRefs(useStateStore())
-  const { menuData } = storeToRefs(useMenuStore())
+  const { sidebarMenuContext, orderFav, orderPriv } = storeToRefs(useStateStore())
+  console.log('orderFav, orderPriv: ', orderFav.value, orderPriv.value)
+  const { selectedOrder, displayCount } = storeToRefs(useMenuStore())
   const menuType = computed((): MENU_TYPE => sidebarMenuContext.value?.menuType!)
+  const isFav = computed((): boolean => sidebarMenuContext.value?.context?.meta?.fav!)
 
-  const menuOptions = ref<MenuOption[][]>([])
-  menuOptions.value = menuData.value[menuType.value]
+  const menuData = ref<Record<MENU_TYPE, MenuOption[][]>>({
+    [MENU_TYPE.FAV_TITLE]: [
+      [
+        {
+          id: 'move-up',
+          label: '向上移动',
+          icon: loadStaticResource('/icons/menu-move-up.svg'),
+          disabled: orderFav.value < orderPriv.value ? true : false,
+        },
+        {
+          id: 'move-down',
+          label: '向下移动',
+          icon: loadStaticResource('/icons/menu-move-down.svg'),
+          disabled: orderFav.value > orderPriv.value ? true : false,
+        },
+      ],
+    ],
+    [MENU_TYPE.PRIV_TITLE]: [
+      [
+        {
+          id: 'order',
+          label: '排序',
+          icon: loadStaticResource('/icons/menu-order.svg'),
+          children: [
+            { id: 'manual', label: '手动', meta: { selected: computed(() => selectedOrder.value === 'manual') } },
+            {
+              id: 'last-edited',
+              label: '上次编辑',
+              meta: { selected: computed(() => selectedOrder.value === 'last-edited') },
+            },
+          ],
+        },
+        {
+          id: 'display',
+          label: '显示',
+          icon: loadStaticResource('/icons/menu-display.svg'),
+          children: [
+            { id: '5', label: '5个项目', meta: { selected: computed(() => displayCount.value === '5') } },
+            { id: '10', label: '10个项目', meta: { selected: computed(() => displayCount.value === '10') } },
+            { id: '15', label: '15个项目', meta: { selected: computed(() => displayCount.value === '15') } },
+            { id: '20', label: '20个项目', meta: { selected: computed(() => displayCount.value === '20') } },
+            { id: 'all', label: '全部', meta: { selected: computed(() => displayCount.value === 'all') } },
+          ],
+        },
+        {
+          id: 'move-up',
+          label: '向上移动',
+          icon: loadStaticResource('/icons/menu-move-up.svg'),
+          disabled: orderPriv.value < orderFav.value ? true : false,
+        },
+        {
+          id: 'move-down',
+          label: '向下移动',
+          icon: loadStaticResource('/icons/menu-move-down.svg'),
+          disabled: orderPriv.value > orderFav.value ? true : false,
+        },
+      ],
+    ],
+
+    [MENU_TYPE.THE_PAGE]: [
+      [
+        {
+          id: isFav.value ? 'remove-from-fav' : 'move-to-fav',
+          label: isFav.value ? '从最爱中移除' : '添加到最爱',
+          icon: isFav.value
+            ? loadStaticResource('/icons/menu-fav-remove.svg')
+            : loadStaticResource('/icons/menu-fav.svg'),
+        },
+      ],
+      [
+        { id: 'copy-link', label: '拷贝链接', icon: loadStaticResource('/icons/menu-copy-link.svg') },
+        {
+          id: 'duplicate',
+          label: '创建副本',
+          icon: loadStaticResource('/icons/menu-duplicate.svg'),
+          tip: '⌘D',
+        },
+        { id: 'rename', label: '重命名', icon: loadStaticResource('/icons/menu-rename.svg'), tip: '⌘⇧R' },
+        {
+          id: 'move-to',
+          label: '移动到',
+          icon: loadStaticResource('/icons/menu-move-to.svg'),
+          tip: '⌘⇧P',
+        },
+        {
+          id: 'move-to-trash',
+          label: '移至垃圾箱',
+          icon: loadStaticResource('/icons/menu-move-to-trash.svg'),
+          meta: { warn: true, warnIcon: loadStaticResource('/icons/menu-move-to-trash-warn.svg') },
+        },
+      ],
+      [
+        {
+          id: 'open-in-new-tab',
+          label: '在新选项卡中打卡',
+          icon: loadStaticResource('/icons/menu-open-in-new-tab.svg'),
+          tip: '⌘⇧↵',
+        },
+        {
+          id: 'open-in-side-preview',
+          label: '在侧边预览中打开',
+          icon: loadStaticResource('/icons/menu-open-in-side-preview.svg'),
+          tip: '⌥Click',
+        },
+      ],
+    ],
+  })
+
+  const menuOptions = menuData.value[menuType.value]
 
   const handleSelect = (data: MenuOption, parentData: MenuOption) => {
+    // 处理排序方式
+    if (['manual', 'last-edited'].includes(data.id)) {
+      selectedOrder.value = data.id
+    }
+    // 处理显示数量
+    if (['5', '10', '15', '20', 'all'].includes(data.id)) {
+      displayCount.value = data.id
+    }
+    // 分组排序
+    if (data.id === 'move-up' || data.id === 'move-down') {
+      ;[orderFav.value, orderPriv.value] = [orderPriv.value, orderFav.value]
+    }
+
     if (data.id === 'move-to-fav') {
       sidebarMenuContext.value!.context!.meta!.fav = true
       favArr.value!.unshift(sidebarMenuContext.value!.context!)
+    }
+    if (data.id === 'remove-from-fav') {
+      sidebarMenuContext.value!.context!.meta!.fav = false
+      favArr.value.splice(favArr.value.findIndex(item => item.id === sidebarMenuContext.value?.context!.id))
     }
 
     sidebarMenuContext.value = undefined

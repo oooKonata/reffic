@@ -20,10 +20,13 @@
     }
   )
 
-  const { isSidebarResizing, sidebarMenuContext, orderFav, orderPriv, showSidebarMenu } = storeToRefs(useStateStore())
+  const { isSidebarResizing, sidebarMenuContext, orderFav, orderPriv } = storeToRefs(useStateStore())
 
   const favToggle = ref(true)
   const privToggle = ref(true)
+
+  const isOnFav = ref(false)
+  const isOnPriv = ref(false)
 
   const isResizeDivHover = ref(false)
 
@@ -135,7 +138,12 @@
 
     <div class="scroll-view" @scroll="handleScroll">
       <div ref="scrollViewContentRef" class="scroll-view__content">
-        <OOptionGroup v-if="favArr.length" class="fav" :style="{ order: orderFav }">
+        <OOptionGroup
+          v-if="favArr.length"
+          class="fav"
+          :style="{ order: orderFav }"
+          @mouseenter="isOnFav = true"
+          @mouseleave="isOnFav = false">
           <template #title>
             <OOption @click="favToggle = !favToggle">
               <template #left>
@@ -160,7 +168,7 @@
                 <template #left>
                   <div :style="{ marginLeft: `${8 * depth}px` }">
                     <OIcon
-                      v-if="hoverId === optionData.id && optionData.children!.length"
+                      v-if="hoverId === optionData.id && optionData.children!.length && isOnFav"
                       :class="[{ 'is-expand': !optionData.collapse }, { 'is-collapse': optionData.collapse }]"
                       :src="loadStaticResource('/icons/sidebar-arrow.svg')"
                       interactive
@@ -184,7 +192,11 @@
           </OOptionNested>
         </OOptionGroup>
 
-        <OOptionGroup class="priv" :style="{ order: orderPriv }">
+        <OOptionGroup
+          class="priv"
+          :style="{ order: orderPriv }"
+          @mouseenter="isOnPriv = true"
+          @mouseleave="isOnPriv = false">
           <template #title>
             <OOption @click="privToggle = !privToggle">
               <template #left>
@@ -210,7 +222,7 @@
                 <template #left>
                   <div :style="{ marginLeft: `${8 * depth}px` }">
                     <OIcon
-                      v-if="hoverId === optionData.id && optionData.children!.length"
+                      v-if="hoverId === optionData.id && optionData.children!.length && isOnPriv"
                       :class="[{ 'is-expand': !optionData.collapse }, { 'is-collapse': optionData.collapse }]"
                       :src="loadStaticResource('/icons/sidebar-arrow.svg')"
                       interactive
