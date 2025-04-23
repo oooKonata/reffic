@@ -67,7 +67,7 @@
     if (data) {
       data.children!.unshift({
         id: uuidv4(),
-        label: '新建页面',
+        label: '新页面',
         icon: loadStaticResource('/icons/sidebar-page.svg'),
         collapse: false,
         meta: {
@@ -79,7 +79,7 @@
     } else {
       pageArr.value.unshift({
         id: uuidv4(),
-        label: '新建页面',
+        label: '新页面',
         icon: loadStaticResource('/icons/sidebar-page.svg'),
         collapse: false,
         meta: {
@@ -178,7 +178,7 @@
                       :src="loadStaticResource('/icons/sidebar-arrow.svg')"
                       interactive
                       @click="optionData.meta!.collapseFav = !optionData.meta!.collapseFav" />
-                    <OIcon v-else :src="loadStaticResource('/icons/sidebar-more-empty.svg')" />
+                    <OIcon v-else :src="loadStaticResource('/icons/sidebar-page-empty.svg')" />
                   </div>
                   <label>{{ optionData.label }}</label>
                 </template>
