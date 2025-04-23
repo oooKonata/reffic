@@ -65,8 +65,9 @@
         @flyout-mouseenter="path => (activeIds = path)">
         <template #default="{ optionData, parentData }">
           <OOption
+            v-if="optionData.visible"
             :source="optionData"
-            :isDiasbled="optionData.disabled"
+            :isDisabled="optionData.disabled"
             :isFlyoutActive="activeIds.includes(optionData.id) && !optionData.disabled"
             @click="handleClick(optionData, parentData!)">
             <template #left>

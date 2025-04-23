@@ -28,7 +28,6 @@ const pageArr = ref<SidebarOption[]>([
     meta: {
       fav: false,
       collapseFav: false,
-      collapsePriv: false,
     },
     children: [
       {
@@ -39,7 +38,6 @@ const pageArr = ref<SidebarOption[]>([
         meta: {
           fav: false,
           collapseFav: false,
-          collapsePriv: false,
         },
         children: [
           {
@@ -50,7 +48,6 @@ const pageArr = ref<SidebarOption[]>([
             meta: {
               fav: false,
               collapseFav: false,
-              collapsePriv: false,
             },
             children: [
               {
@@ -61,7 +58,6 @@ const pageArr = ref<SidebarOption[]>([
                 meta: {
                   fav: false,
                   collapseFav: false,
-                  collapsePriv: false,
                 },
                 children: [],
               },
@@ -79,7 +75,6 @@ const pageArr = ref<SidebarOption[]>([
     meta: {
       fav: false,
       collapseFav: false,
-      collapsePriv: false,
     },
     children: [
       {
@@ -89,7 +84,6 @@ const pageArr = ref<SidebarOption[]>([
         meta: {
           fav: false,
           collapseFav: false,
-          collapsePriv: false,
         },
         children: [
           {
@@ -100,7 +94,6 @@ const pageArr = ref<SidebarOption[]>([
             meta: {
               fav: false,
               collapseFav: false,
-              collapsePriv: false,
             },
             children: [
               {
@@ -110,7 +103,6 @@ const pageArr = ref<SidebarOption[]>([
                 meta: {
                   fav: false,
                   collapseFav: false,
-                  collapsePriv: false,
                 },
                 children: [],
               },
@@ -127,7 +119,6 @@ const pageArr = ref<SidebarOption[]>([
     meta: {
       fav: false,
       collapseFav: false,
-      collapsePriv: false,
     },
     children: [
       {
@@ -137,7 +128,6 @@ const pageArr = ref<SidebarOption[]>([
         meta: {
           fav: false,
           collapseFav: false,
-          collapsePriv: false,
         },
         children: [],
       },

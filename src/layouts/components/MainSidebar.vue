@@ -73,7 +73,6 @@
         meta: {
           fav: false,
           collapseFav: false,
-          collapsePriv: false,
         },
         children: [],
       })
@@ -86,7 +85,6 @@
         meta: {
           fav: false,
           collapseFav: false,
-          collapsePriv: false,
         },
         children: [],
       })

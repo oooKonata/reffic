@@ -23,12 +23,14 @@
           id: 'move-up',
           label: '向上移动',
           icon: loadStaticResource('/icons/menu-move-up.svg'),
+          visible: true,
           disabled: orderFav.value < orderPriv.value ? true : false,
         },
         {
           id: 'move-down',
           label: '向下移动',
           icon: loadStaticResource('/icons/menu-move-down.svg'),
+          visible: true,
           disabled: orderFav.value > orderPriv.value ? true : false,
         },
       ],
@@ -39,11 +41,18 @@
           id: 'order',
           label: '排序',
           icon: loadStaticResource('/icons/menu-order.svg'),
+          visible: true,
           children: [
-            { id: 'manual', label: '手动', meta: { selected: computed(() => selectedOrder.value === 'manual') } },
+            {
+              id: 'manual',
+              label: '手动',
+              visible: true,
+              meta: { selected: computed(() => selectedOrder.value === 'manual') },
+            },
             {
               id: 'last-edited',
               label: '上次编辑',
+              visible: true,
               meta: { selected: computed(() => selectedOrder.value === 'last-edited') },
             },
           ],
@@ -52,24 +61,52 @@
           id: 'display',
           label: '显示',
           icon: loadStaticResource('/icons/menu-display.svg'),
+          visible: true,
           children: [
-            { id: '5', label: '5个项目', meta: { selected: computed(() => displayCount.value === '5') } },
-            { id: '10', label: '10个项目', meta: { selected: computed(() => displayCount.value === '10') } },
-            { id: '15', label: '15个项目', meta: { selected: computed(() => displayCount.value === '15') } },
-            { id: '20', label: '20个项目', meta: { selected: computed(() => displayCount.value === '20') } },
-            { id: 'all', label: '全部', meta: { selected: computed(() => displayCount.value === 'all') } },
+            {
+              id: '5',
+              label: '5个项目',
+              visible: true,
+              meta: { selected: computed(() => displayCount.value === '5') },
+            },
+            {
+              id: '10',
+              label: '10个项目',
+              visible: true,
+              meta: { selected: computed(() => displayCount.value === '10') },
+            },
+            {
+              id: '15',
+              label: '15个项目',
+              visible: true,
+              meta: { selected: computed(() => displayCount.value === '15') },
+            },
+            {
+              id: '20',
+              label: '20个项目',
+              visible: true,
+              meta: { selected: computed(() => displayCount.value === '20') },
+            },
+            {
+              id: 'all',
+              label: '全部',
+              visible: true,
+              meta: { selected: computed(() => displayCount.value === 'all') },
+            },
           ],
         },
         {
           id: 'move-up',
           label: '向上移动',
           icon: loadStaticResource('/icons/menu-move-up.svg'),
+          visible: favArr.value.length ? true : false,
           disabled: orderPriv.value < orderFav.value ? true : false,
         },
         {
           id: 'move-down',
           label: '向下移动',
           icon: loadStaticResource('/icons/menu-move-down.svg'),
+          visible: favArr.value.length ? true : false,
           disabled: orderPriv.value > orderFav.value ? true : false,
         },
       ],
@@ -83,6 +120,7 @@
           icon: isFav.value
             ? loadStaticResource('/icons/menu-fav-remove.svg')
             : loadStaticResource('/icons/menu-fav.svg'),
+          visible: true,
         },
       ],
       [
@@ -91,6 +129,7 @@
           id: 'duplicate',
           label: '创建副本',
           icon: loadStaticResource('/icons/menu-duplicate.svg'),
+          visible: true,
           tip: '⌘D',
         },
         { id: 'rename', label: '重命名', icon: loadStaticResource('/icons/menu-rename.svg'), tip: '⌘⇧R' },
@@ -98,12 +137,14 @@
           id: 'move-to',
           label: '移动到',
           icon: loadStaticResource('/icons/menu-move-to.svg'),
+          visible: true,
           tip: '⌘⇧P',
         },
         {
           id: 'move-to-trash',
           label: '移至垃圾箱',
           icon: loadStaticResource('/icons/menu-move-to-trash.svg'),
+          visible: true,
           meta: { warn: true, warnIcon: loadStaticResource('/icons/menu-move-to-trash-warn.svg') },
         },
       ],
@@ -112,12 +153,14 @@
           id: 'open-in-new-tab',
           label: '在新选项卡中打卡',
           icon: loadStaticResource('/icons/menu-open-in-new-tab.svg'),
+          visible: true,
           tip: '⌘⇧↵',
         },
         {
           id: 'open-in-side-preview',
           label: '在侧边预览中打开',
           icon: loadStaticResource('/icons/menu-open-in-side-preview.svg'),
+          visible: true,
           tip: '⌥Click',
         },
       ],
@@ -141,15 +184,16 @@
     }
 
     if (data.id === 'move-to-fav') {
-      sidebarMenuContext.value!.context!.meta!.fav = true
-      sidebarMenuContext.value!.context!.meta!.collapseFav = false
-      favArr.value!.unshift(sidebarMenuContext.value!.context!)
+      context.value.meta!.fav = true
+      context.value.meta!.collapseFav = false
+      favArr.value!.unshift(context.value)
     }
     if (data.id === 'remove-from-fav') {
-      sidebarMenuContext.value!.context!.meta!.fav = false
-      favArr.value.splice(favArr.value.findIndex(item => item.id === sidebarMenuContext.value?.context!.id))
+      context.value.meta!.fav = false
+      favArr.value.splice(favArr.value.findIndex(item => item.id === context.value.id))
     }
 
+    // 初始化上下文
     sidebarMenuContext.value = undefined
   }
 </script>

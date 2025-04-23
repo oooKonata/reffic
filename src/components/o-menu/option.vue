@@ -10,7 +10,7 @@
     source?: MenuOption
     activeId?: string
     isFlyoutActive?: boolean // 侧浮出菜单中激活状态
-    isDiasbled?: boolean // 禁用状态
+    isDisabled?: boolean // 禁用状态
   }>()
 
   const emits = defineEmits<{
@@ -24,14 +24,15 @@
   const isActive = computed(() => (props.source?.id && props.activeId ? props.activeId === props.source.id : false))
 
   const handleMouseEnter = () => {
-    if (!props.isDiasbled) {
+    if (!props.isDisabled) {
       simHover.value = true
       emits('option-mouseenter', props.source)
     }
   }
   const handleMouseLeave = () => {
-    if (!props.isDiasbled) {
+    if (!props.isDisabled) {
       simHover.value = false
+      simActive.value = false
       emits('option-mouseleave')
     }
   }
@@ -44,7 +45,7 @@
       { 'sim-active': simActive },
       { 'sim-hover': simHover },
       { 'is-active': isActive || isFlyoutActive },
-      { 'is-disabled': isDiasbled },
+      { 'is-disabled': isDisabled },
     ]"
     @mousedown="simActive = true"
     @mouseup="simActive = false"
