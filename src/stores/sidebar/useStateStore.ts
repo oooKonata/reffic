@@ -13,6 +13,7 @@ export const useStateStore = defineStore(
       context?: SidebarOption
       position: { x: number; y: number }
     }>()
+
     const orderFav = ref(1)
     const orderPriv = ref(2)
 

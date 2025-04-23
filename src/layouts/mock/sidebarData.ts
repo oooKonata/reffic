@@ -27,6 +27,8 @@ const pageArr = ref<SidebarOption[]>([
     collapse: false,
     meta: {
       fav: false,
+      collapseFav: false,
+      collapsePriv: false,
     },
     children: [
       {
@@ -36,6 +38,8 @@ const pageArr = ref<SidebarOption[]>([
         collapse: false,
         meta: {
           fav: false,
+          collapseFav: false,
+          collapsePriv: false,
         },
         children: [
           {
@@ -45,6 +49,8 @@ const pageArr = ref<SidebarOption[]>([
             collapse: false,
             meta: {
               fav: false,
+              collapseFav: false,
+              collapsePriv: false,
             },
             children: [
               {
@@ -54,6 +60,8 @@ const pageArr = ref<SidebarOption[]>([
                 collapse: false,
                 meta: {
                   fav: false,
+                  collapseFav: false,
+                  collapsePriv: false,
                 },
                 children: [],
               },
@@ -70,15 +78,18 @@ const pageArr = ref<SidebarOption[]>([
     icon: loadStaticResource('/icons/sidebar-page.svg'),
     meta: {
       fav: false,
+      collapseFav: false,
+      collapsePriv: false,
     },
     children: [
       {
         id: uuidv4(),
         label: '新页面b1',
         icon: loadStaticResource('/icons/sidebar-page.svg'),
-        collapse: false,
         meta: {
           fav: false,
+          collapseFav: false,
+          collapsePriv: false,
         },
         children: [
           {
@@ -88,15 +99,18 @@ const pageArr = ref<SidebarOption[]>([
             collapse: false,
             meta: {
               fav: false,
+              collapseFav: false,
+              collapsePriv: false,
             },
             children: [
               {
                 id: uuidv4(),
                 label: '新页面b1',
                 icon: loadStaticResource('/icons/sidebar-page.svg'),
-                collapse: false,
                 meta: {
                   fav: false,
+                  collapseFav: false,
+                  collapsePriv: false,
                 },
                 children: [],
               },
@@ -110,18 +124,20 @@ const pageArr = ref<SidebarOption[]>([
     id: uuidv4(),
     label: '新页面b0',
     icon: loadStaticResource('/icons/sidebar-page.svg'),
-    collapse: false,
     meta: {
       fav: false,
+      collapseFav: false,
+      collapsePriv: false,
     },
     children: [
       {
         id: uuidv4(),
         label: '新页面b1',
         icon: loadStaticResource('/icons/sidebar-page.svg'),
-        collapse: false,
         meta: {
           fav: false,
+          collapseFav: false,
+          collapsePriv: false,
         },
         children: [],
       },

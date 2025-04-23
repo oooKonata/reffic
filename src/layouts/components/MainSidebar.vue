@@ -3,7 +3,7 @@
   import { OOption, OOptionGroup, OOptionGroupInstance, OOptionNested } from '@/components/o-menu'
   import { favArr, navArr, pageArr, setArr } from '../mock/sidebarData'
   import { loadStaticResource } from '@/assets'
-  import { onMounted, onUnmounted, ref } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { storeToRefs } from 'pinia'
   import { useStateStore } from '@/stores/sidebar/useStateStore'
   import { throttle } from 'lodash-es'
@@ -72,6 +72,8 @@
         collapse: false,
         meta: {
           fav: false,
+          collapseFav: false,
+          collapsePriv: false,
         },
         children: [],
       })
@@ -83,6 +85,8 @@
         collapse: false,
         meta: {
           fav: false,
+          collapseFav: false,
+          collapsePriv: false,
         },
         children: [],
       })
@@ -157,7 +161,7 @@
               </template>
             </OOption>
           </template>
-          <OOptionNested v-if="favToggle" :source="favArr">
+          <OOptionNested v-if="favToggle" :source="favArr" mark>
             <template #default="{ optionData, depth }">
               <OOption
                 :source="optionData"
@@ -169,10 +173,13 @@
                   <div :style="{ marginLeft: `${8 * depth}px` }">
                     <OIcon
                       v-if="hoverId === optionData.id && optionData.children!.length && isOnFav"
-                      :class="[{ 'is-expand': !optionData.collapse }, { 'is-collapse': optionData.collapse }]"
+                      :class="[
+                        { 'is-expand': isOnFav && !optionData.meta?.collapseFav },
+                        { 'is-collapse': isOnFav && optionData.meta?.collapseFav },
+                      ]"
                       :src="loadStaticResource('/icons/sidebar-arrow.svg')"
                       interactive
-                      @click="optionData.collapse = !optionData.collapse" />
+                      @click="optionData.meta!.collapseFav = !optionData.meta!.collapseFav" />
                     <OIcon v-else :src="loadStaticResource('/icons/sidebar-page.svg')" />
                   </div>
                   <label>{{ optionData.label }}</label>
@@ -223,7 +230,10 @@
                   <div :style="{ marginLeft: `${8 * depth}px` }">
                     <OIcon
                       v-if="hoverId === optionData.id && optionData.children!.length && isOnPriv"
-                      :class="[{ 'is-expand': !optionData.collapse }, { 'is-collapse': optionData.collapse }]"
+                      :class="[
+                        { 'is-expand': isOnPriv && !optionData.collapse },
+                        { 'is-collapse': isOnPriv && optionData.collapse },
+                      ]"
                       :src="loadStaticResource('/icons/sidebar-arrow.svg')"
                       interactive
                       @click="optionData.collapse = !optionData.collapse" />

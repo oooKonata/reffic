@@ -8,11 +8,12 @@
   import { favArr } from '../mock/sidebarData'
   import { loadStaticResource } from '@/assets'
   import { useMenuStore } from '@/stores/sidebar/useMenuStore'
+  import { SidebarOption } from '../types'
 
   const { sidebarMenuContext, orderFav, orderPriv } = storeToRefs(useStateStore())
-  console.log('orderFav, orderPriv: ', orderFav.value, orderPriv.value)
   const { selectedOrder, displayCount } = storeToRefs(useMenuStore())
   const menuType = computed((): MENU_TYPE => sidebarMenuContext.value?.menuType!)
+  const context = computed((): SidebarOption => sidebarMenuContext.value?.context!)
   const isFav = computed((): boolean => sidebarMenuContext.value?.context?.meta?.fav!)
 
   const menuData = ref<Record<MENU_TYPE, MenuOption[][]>>({
@@ -141,6 +142,7 @@
 
     if (data.id === 'move-to-fav') {
       sidebarMenuContext.value!.context!.meta!.fav = true
+      sidebarMenuContext.value!.context!.meta!.collapseFav = false
       favArr.value!.unshift(sidebarMenuContext.value!.context!)
     }
     if (data.id === 'remove-from-fav') {

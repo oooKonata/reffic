@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, computed, inject, provide, CSSProperties } from 'vue'
+  import { ref, computed, inject, provide, markRaw } from 'vue'
   import { depthKey } from '../constants/key'
   import { MenuOption } from './types'
 
@@ -9,6 +9,7 @@
 
   defineProps<{
     source: MenuOption[]
+    mark?: boolean // 标记 fav 分组的折叠（collapseFav）与 priv 分组折叠（collapse）区分开
   }>()
 
   // 深度管理
@@ -21,8 +22,8 @@
   <div v-for="(item, index) in source" :key="index" class="o-option-nested">
     <slot :optionData="item" :depth="depth" />
 
-    <template v-if="item.children?.length && !item.collapse">
-      <OOptionNested :source="item.children!">
+    <template v-if="item.children?.length && (!mark ? !item.collapse : !item.meta?.collapseFav)">
+      <OOptionNested :source="item.children!" :mark="mark">
         <template
           v-for="slotName in Object.keys($slots)"
           #[slotName]="scope: { optionData: MenuOption, depth: number }">
