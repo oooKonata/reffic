@@ -178,7 +178,7 @@
                       :src="loadStaticResource('/icons/sidebar-arrow.svg')"
                       interactive
                       @click="optionData.meta!.collapseFav = !optionData.meta!.collapseFav" />
-                    <OIcon v-else :src="loadStaticResource('/icons/sidebar-page.svg')" />
+                    <OIcon v-else :src="loadStaticResource('/icons/sidebar-more-empty.svg')" />
                   </div>
                   <label>{{ optionData.label }}</label>
                 </template>
@@ -235,7 +235,7 @@
                       :src="loadStaticResource('/icons/sidebar-arrow.svg')"
                       interactive
                       @click="optionData.collapse = !optionData.collapse" />
-                    <OIcon v-else :src="loadStaticResource('/icons/sidebar-page.svg')" />
+                    <OIcon v-else :src="loadStaticResource('/icons/sidebar-page-empty.svg')" />
                   </div>
                   <label>{{ optionData.label }}</label>
                 </template>
