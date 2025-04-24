@@ -96,7 +96,7 @@
   const handleRoute = (sidebarOptionData: SidebarOption) => {
     activeId.value = sidebarOptionData.id
     if (sidebarOptionData.id.startsWith('page')) {
-      router.push({ name: 'page', params: { id: sidebarOptionData.id } })
+      router.push({ name: 'page', params: { id: sidebarOptionData.id.slice(4) } })
     } else {
       router.push({ name: sidebarOptionData.id })
     }
