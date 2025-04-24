@@ -45,6 +45,11 @@ const routes: RouteRecordRaw[] = [
     name: 'share',
     component: () => import('@/views/share/ShareView.vue'),
   },
+  {
+    path: '/page/:id',
+    name: 'page',
+    component: () => import('@/views/page/PageView.vue'),
+  },
 ]
 
 const router = createRouter({

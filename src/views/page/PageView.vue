@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div>page</div>
+  <div>{{ $route.params.id }}</div>
 </template>
 
 <style scoped lang="scss"></style>

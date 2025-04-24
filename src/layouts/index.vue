@@ -2,8 +2,9 @@
   import { storeToRefs } from 'pinia'
   import { useStateStore } from '@/stores/sidebar/useStateStore'
   import MainSidebar from './components/MainSidebar.vue'
-  import { ref, watch } from 'vue'
+  import { ref } from 'vue'
   import SidebarMenu from './components/SidebarMenu.vue'
+  import { RouterView } from 'vue-router'
 
   const { isSidebarResizing, sidebarMenuContext } = storeToRefs(useStateStore())
 
@@ -17,7 +18,9 @@
     @mousemove="sidebarWidth = isSidebarResizing ? $event.clientX : sidebarWidth"
     @mouseup="isSidebarResizing = false">
     <MainSidebar :sidebarWidth="sidebarWidth" />
-    <div class="content"></div>
+    <div class="content">
+      <RouterView />
+    </div>
     <div
       v-if="sidebarMenuContext"
       class="overlay"

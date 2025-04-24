@@ -10,6 +10,7 @@
   import { SidebarOption } from '../types'
   import { v4 as uuidv4 } from 'uuid'
   import { MENU_TYPE } from '@/enums'
+  import { useRouter } from 'vue-router'
 
   withDefaults(
     defineProps<{
@@ -91,8 +92,14 @@
     }
   }
 
-  const handleRoute = (data: SidebarOption) => {
-    activeId.value = data.id
+  const router = useRouter()
+  const handleRoute = (sidebarOptionData: SidebarOption) => {
+    activeId.value = sidebarOptionData.id
+    if (sidebarOptionData.id.startsWith('page')) {
+      router.push({ name: 'page', params: { id: sidebarOptionData.id } })
+    } else {
+      router.push({ name: sidebarOptionData.id })
+    }
   }
 
   onMounted(() => {

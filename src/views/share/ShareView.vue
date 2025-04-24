@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div>share</div>
+  <div>{{ $route.name }}</div>
 </template>
 
 <style scoped lang="scss"></style>
