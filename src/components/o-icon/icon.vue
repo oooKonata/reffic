@@ -42,6 +42,7 @@
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
+    overflow: hidden;
     &[data-interactive='true'] {
       cursor: pointer;
     }
